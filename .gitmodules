@@ -4,3 +4,6 @@
 [submodule "extern/colors.hpp"]
 	path = extern/colors.hpp
 	url = git@github.com:hugorplobo/colors.hpp.git
+[submodule "extern/json"]
+	path = extern/json
+	url = git@github.com:nlohmann/json.git
