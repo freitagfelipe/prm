@@ -12,11 +12,13 @@ set(SUBDIRECTORIES "extern/CLI11" "extern/json")
 
 set(CLI11_TESTING OFF)
 
+include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/extern/colors.hpp/include/colors)
+
 foreach(SUBDIRECTORY IN LISTS SUBDIRECTORIES)
     add_subdirectory(${SUBDIRECTORY})
 endforeach()
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp src/commands.cpp)
 
 if (UNIX)
     target_link_libraries(${PROJECT_NAME} ${TARGET_LINK_LIBRARIES})
