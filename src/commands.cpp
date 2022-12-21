@@ -17,7 +17,9 @@ bool check_repository_category_string(std::string &category) {
 void Commands::add(CLI::App &app) {
     CLI::App *add_subcommand {app.add_subcommand("add", "Add a repository")};
 
-    add_subcommand->add_option("name", this->repositories_names, "Repositories to add")->required();
+    add_subcommand->add_option("name", this->repository_name, "Repository name")->required();
+
+    add_subcommand->add_option("-l,--link", this->repository_link, "The link to clone the given repository")->required();
 
     add_subcommand->add_option("-c,--category", this->repository_category, "The category of the repositories (\"created\" | \"idle\" | \"working\" | \"finished\")")->capture_default_str();
 
@@ -28,13 +30,7 @@ void Commands::add(CLI::App &app) {
             return;
         }
 
-        std::cout << colors::green << "Adding the following repositories in the category " << this->repository_category << ":";
-        
-        for (std::string repository_name : this->repositories_names) {
-            std::cout << " " << repository_name;
-        }
-
-        std::cout << std::endl;
+        std::cout << colors::green << "Adding the following repository in the category " << this->repository_category << ": " << this->repository_name << " with the following clone link: " << this->repository_link << std::endl;
     });
 }
 
