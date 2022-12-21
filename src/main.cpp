@@ -8,6 +8,8 @@ int main(int argc, char **argv) {
 
     commands.add(app);
     commands.remove(app);
+    commands.status(app);
+    commands.update(app);
 
     app.preparse_callback([](size_t arg_count) {
         if (arg_count == 0) {
