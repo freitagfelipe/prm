@@ -17,9 +17,9 @@ bool check_repository_category_string(std::string &category) {
 void Commands::add(CLI::App &app) {
     CLI::App *add_subcommand {app.add_subcommand("add", "Add a repository")};
 
-    add_subcommand->add_option("-n,--name", this->repository_name, "The name of the repository")->required();
+    add_subcommand->add_option("name", this->repositories_names, "Repositories to add")->required();
 
-    add_subcommand->add_option("-c,--category", this->repository_category, "The category of the repository (\"created\" | \"idle\" | \"working\" | \"finished\")")->capture_default_str();
+    add_subcommand->add_option("-c,--category", this->repository_category, "The category of the repositories (\"created\" | \"idle\" | \"working\" | \"finished\")")->capture_default_str();
 
     add_subcommand->callback([&]() {
         if (!check_repository_category_string(this->repository_category)) {
@@ -28,18 +28,28 @@ void Commands::add(CLI::App &app) {
             return;
         }
 
-        std::cout << colors::green << "Repository to be added name: " << this->repository_name << ", with the category: " << this->repository_category << std::endl;
+        std::cout << colors::green << "Adding the following repositories in the category " << this->repository_category << ":";
+        
+        for (std::string repository_name : this->repositories_names) {
+            std::cout << " " << repository_name;
+        }
+
+        std::cout << std::endl;
     });
 }
 
 void Commands::remove(CLI::App &app) {
     CLI::App *remove_subcommand {app.add_subcommand("remove", "Remove a repository")};
 
-    static std::string repository_name {};
-
-    remove_subcommand->add_option("-n,--name", this->repository_name, "The name of the repository")->required();
+    remove_subcommand->add_option("name", this->repositories_names, "Repositories to remove")->required();
 
     remove_subcommand->callback([&]() {
-        std::cout << colors::green << "Repository to be removed name: " << this->repository_name << std::endl;
+        std::cout << colors::green << "Removing the following repositories:";
+
+        for (std::string repository_name : this->repositories_names) {
+            std::cout << " " << repository_name;
+        }
+
+        std::cout << std::endl;
     });
 }

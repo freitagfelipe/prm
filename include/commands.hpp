@@ -1,6 +1,7 @@
 #pragma once
 
 #include <CLI/CLI.hpp>
+#include <vector>
 #include <string>
 
 class Commands {
@@ -8,7 +9,7 @@ public:
     void add(CLI::App &app);
     void remove(CLI::App &app);
 private:
-    std::string repository_name {};
+    std::vector<std::string> repositories_names;
     std::string repository_category {"created"};
 };
 
