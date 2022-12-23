@@ -1,10 +1,13 @@
 #include <CLI/CLI.hpp>
 #include <commands.hpp>
+#include <setup.hpp>
 #include <iostream>
 
 int main(int argc, char **argv) {
     CLI::App app {"PRM - A simple and ease-to-use personal repository manager"};
     Commands commands;
+
+    setup::init();
 
     commands.add(app);
     commands.remove(app);
