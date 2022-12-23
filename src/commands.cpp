@@ -57,7 +57,7 @@ void Commands::status(CLI::App &app) {
     CLI::App *status_subcommand {app.add_subcommand("status", "The status of your repositories")};
 
     status_subcommand->callback([&]() {
-        std::cout << colors::green << "Status subcommand executed." << std::endl;
+        store::print();
     });
 }
 
