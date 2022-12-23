@@ -16,11 +16,11 @@ void setup::init() {
     }
 
     nlohmann::json j = {
-        {"created", {}},
-        {"idle", {}},
-        {"working", {}},
-        {"finished", {}},
-        {"others", {}}
+        {"created", nlohmann::json::array()},
+        {"idle", nlohmann::json::array()},
+        {"working", nlohmann::json::array()},
+        {"finished", nlohmann::json::array()},
+        {"others",nlohmann::json::array()}
     };
 
     f.open(".prm.json", std::ios::out);

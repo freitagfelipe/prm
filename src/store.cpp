@@ -41,13 +41,9 @@ void store::add_repository(std::string &name, std::string &repository_link, std:
         }
     }
 
-    if (j[category].is_null()) {
-        j[category] = std::vector<nlohmann::json>({new_value});
-    } else {
-        j[category].push_back(new_value);
+    j[category].push_back(new_value);
 
-        std::sort(j[category].begin(), j[category].end());
-    }
+    std::sort(j[category].begin(), j[category].end());
 
     f.seekp(0);
     f.clear();
