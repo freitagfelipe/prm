@@ -5,6 +5,9 @@
 #include <iostream>
 #include <vector>
 
+const std::string name_key {"name"};
+const std::string link_key {"link"};
+
 void store::add_repository(std::string &name, std::string &repository_link, std::string &category) {
     std::fstream f;
 
@@ -18,8 +21,8 @@ void store::add_repository(std::string &name, std::string &repository_link, std:
 
     nlohmann::json j {nlohmann::json::parse(f)};
     nlohmann::json new_value = {
-        {"link", repository_link},
-        {"name", name}
+        {link_key, repository_link},
+        {name_key, name}
     };
 
     j = j.at(0);
@@ -30,7 +33,7 @@ void store::add_repository(std::string &name, std::string &repository_link, std:
         }
 
         for (auto &[_, value] : curr_value.items()) {
-            if (value["name"] == name) {
+            if (value[name_key] == name) {
                 std::cerr << colors::red << "You already have this repository!" << std::endl;
 
                 std::exit(2);
@@ -67,16 +70,18 @@ void store::print() {
 
     j = j.at(0);
 
-    for (auto &[curr_category, curr_value] : j.items()) {
-        std::cout << colors::cyan << curr_category << ":" << std::endl;
+    std::vector<std::string> categories {"created", "idle", "working", "finished", "others"};
 
-        if (curr_value.is_null()) {
+    for (std::string category : categories) {
+        std::cout << colors::cyan << category << ":" << std::endl;
+
+        if (j[category].is_null()) {
             std::cout << colors::red << "\tEmpty category" << std::endl;
 
             continue;
         }
 
-        for (auto &[_, value] : curr_value.items()) {
+        for (auto &[_, value] : j[category].items()) {
             std::cout << colors::white << '\t' << value["name"].get<std::string>() << std::endl;
         }
     }
@@ -103,10 +108,10 @@ void store::clone(std::string &name) {
         }
 
         for (auto &[_, value] : curr_value.items()) {
-            if (value["name"] == name) {
+            if (value[name_key] == name) {
                 std::stringstream ss;
 
-                ss << "git clone " << value["link"].get<std::string>();
+                ss << "git clone " << value[link_key].get<std::string>();
 
                 std::system(ss.str().c_str());
 
