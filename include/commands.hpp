@@ -11,6 +11,7 @@ public:
     void status(CLI::App &app);
     void update(CLI::App &app);
     void clone(CLI::App &app);
+    void remove(CLI::App &app);
 private:
     std::vector<std::string> repositories_names;
     std::string repository_name {};

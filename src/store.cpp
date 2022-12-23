@@ -55,7 +55,7 @@ void store::add_repository(std::string &name, std::string &repository_link, std:
     f << std::setw(4) << j;
 }
 
-void store::print() {
+void store::print_repositories() {
     std::fstream f;
 
     f.open(".prm.json", std::ios::in);
@@ -87,7 +87,7 @@ void store::print() {
     }
 }
 
-void store::clone(std::string &name) {
+void store::clone_repository(std::string &name) {
     std::fstream f;
 
     f.open(".prm.json", std::ios::in);

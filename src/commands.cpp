@@ -57,7 +57,7 @@ void Commands::status(CLI::App &app) {
     CLI::App *status_subcommand {app.add_subcommand("status", "The status of your repositories")};
 
     status_subcommand->callback([&]() {
-        store::print();
+        store::print_repositories();
     });
 }
 
@@ -91,7 +91,7 @@ void Commands::clone(CLI::App &app) {
     clone_subcommand->add_option("name", this->repository_name, "The name of the repository to clone")->required();
 
     clone_subcommand->callback([&]() {
-        store::clone(this->repository_name);
+        store::clone_repository(this->repository_name);
 
         std::cout << colors::green << "Cloned " << this->repository_name << " in the current directory" << std::endl;
     });
