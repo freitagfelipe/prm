@@ -5,4 +5,5 @@
 namespace store {
     void add_repository(std::string &name, std::string &clone_link, std::string &category);
     void print();
+    void clone(std::string &name);
 }
