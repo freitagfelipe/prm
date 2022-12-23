@@ -43,13 +43,9 @@ void Commands::remove(CLI::App &app) {
     remove_subcommand->add_option("name", this->repositories_names, "Repositories to remove")->required();
 
     remove_subcommand->callback([&]() {
-        std::cout << colors::green << "Removing the following repositories:";
+        store::remove_repository(this->repositories_names);
 
-        for (std::string repository_name : this->repositories_names) {
-            std::cout << " " << repository_name;
-        }
-
-        std::cout << std::endl;
+        std::cout << colors::green << "Finished removing the repositories" << std::endl;
     });
 }
 
