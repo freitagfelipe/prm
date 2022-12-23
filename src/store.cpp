@@ -109,11 +109,21 @@ void store::clone(std::string &name) {
 
         for (auto &[_, value] : curr_value.items()) {
             if (value[name_key] == name) {
+                if (std::system("git 2> /dev/null 1> /dev/null") != 256) {
+                    std::cerr << colors::red << "You should have git installed to execute this command" << std::endl;
+
+                    std::exit(2);
+                }
+
                 std::stringstream ss;
 
-                ss << "git clone " << value[link_key].get<std::string>();
+                ss << "git clone " << value[link_key].get<std::string>() << " 2> /dev/null 1> /dev/null";
 
-                std::system(ss.str().c_str());
+                if (std::system(ss.str().c_str()) == 32768) {
+                    std::cerr << colors::red << "You already have this repository in the current directory" << std::endl;
+
+                    std::exit(2);
+                }
 
                 return;
             }
