@@ -49,3 +49,33 @@ void store::add_repository(std::string &name, std::string &repository_link, std:
 
     f << std::setw(4) << j;
 }
+
+void store::print() {
+    std::fstream f;
+
+    f.open(".prm.json", std::ios::in);
+
+    if (!f.is_open()) {
+        std::cerr << colors::red << "Can't open the file" << std::endl;
+
+        std::exit(1);
+    }
+
+    nlohmann::json j {nlohmann::json::parse(f)};
+
+    j = j.at(0);
+
+    for (auto &[curr_category, curr_value] : j.items()) {
+        std::cout << colors::cyan << curr_category << ":" << std::endl;
+
+        if (curr_value.is_null()) {
+            std::cout << colors::red << "\tEmpty category" << std::endl;
+
+            continue;
+        }
+
+        for (auto &[_, value] : curr_value.items()) {
+            std::cout << colors::white << '\t' << value["name"].get<std::string>() << std::endl;
+        }
+    }
+}
