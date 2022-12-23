@@ -84,3 +84,15 @@ void Commands::update(CLI::App &app) {
         std::cout << std::endl;
     });
 }
+
+void Commands::clone(CLI::App &app) {
+    CLI::App *clone_subcommand {app.add_subcommand("clone", "Clone the given repository in the current directory")};
+
+    clone_subcommand->add_option("name", this->repository_name, "The name of the repository to clone")->required();
+
+    clone_subcommand->callback([&]() {
+        store::clone(this->repository_name);
+
+        std::cout << colors::green << "Cloned " << this->repository_name << " in the current directory" << std::endl;
+    });
+}
