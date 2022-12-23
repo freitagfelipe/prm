@@ -4,7 +4,7 @@
 #include <iostream>
 
 bool check_repository_category_string(std::string &category) {
-    std::string valid_categories[] = {"created", "idle", "working", "finished"};
+    std::string valid_categories[] = {"created", "idle", "working", "finished", "others"};
 
     for (const std::string &valid_category : valid_categories) {
         if (valid_category == category) {
@@ -22,7 +22,7 @@ void Commands::add(CLI::App &app) {
 
     add_subcommand->add_option("-l,--link", this->repository_link, "The link to clone the given repository")->required();
 
-    add_subcommand->add_option("-c,--category", this->repository_category, "The category of the repositories (\"created\" | \"idle\" | \"working\" | \"finished\")")->capture_default_str();
+    add_subcommand->add_option("-c,--category", this->repository_category, "The category of the repositories (\"created\" | \"idle\" | \"working\" | \"finished\" | \"others\")")->capture_default_str();
 
     add_subcommand->callback([&]() {
         if (!check_repository_category_string(this->repository_category)) {
@@ -66,7 +66,7 @@ void Commands::update(CLI::App &app) {
 
     update_subcommand->add_option("name", this->repositories_names, "Repositories to update");
 
-    update_subcommand->add_option("-c,--category", this->repository_category, "The new category of the repositories (\"created\" | \"idle\" | \"working\" | \"finished\")")->capture_default_str();
+    update_subcommand->add_option("-c,--category", this->repository_category, "The new category of the repositories (\"created\" | \"idle\" | \"working\" | \"finished\" | \"others\")")->capture_default_str();
 
     update_subcommand->callback([&]() {
         if (!check_repository_category_string(this->repository_category)) {

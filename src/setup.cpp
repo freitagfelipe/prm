@@ -19,7 +19,8 @@ void setup::init() {
         {"created", {}},
         {"idle", {}},
         {"working", {}},
-        {"finished", {}}
+        {"finished", {}},
+        {"others", {}}
     };
 
     f.open(".prm.json", std::ios::out);
