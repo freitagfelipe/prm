@@ -1,4 +1,5 @@
 #include <commands.hpp>
+#include <store.hpp>
 #include <colors.hpp>
 #include <iostream>
 
@@ -30,7 +31,9 @@ void Commands::add(CLI::App &app) {
             return;
         }
 
-        std::cout << colors::green << "Adding the following repository in the category " << this->repository_category << ": " << this->repository_name << " with the following clone link: " << this->repository_link << std::endl;
+        store::add_repository(this->repository_name, this->repository_link, this->repository_category);
+
+        std::cout << colors::green << "Successfully added the repository in the " << this->repository_category << "!" << std::endl;
     });
 }
 
