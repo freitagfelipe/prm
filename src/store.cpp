@@ -29,8 +29,8 @@ void store::add_repository(std::string &name, std::string &repository_link, std:
             continue;
         }
 
-        for (auto &[key, value] : curr_value.items()) {
-            if (value["name"] == name && value["link"] == repository_link) {
+        for (auto &[_, value] : curr_value.items()) {
+            if (value["name"] == name) {
                 std::cerr << colors::red << "You already have this repository!" << std::endl;
 
                 std::exit(2);
@@ -42,6 +42,8 @@ void store::add_repository(std::string &name, std::string &repository_link, std:
         j["created"] = std::vector<nlohmann::json>({new_value});
     } else {
         j["created"].push_back(new_value);
+
+        std::sort(j["created"].begin(), j["created"].end());
     }
 
     f.seekp(0);
