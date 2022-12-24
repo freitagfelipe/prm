@@ -26,7 +26,7 @@ void Commands::add(CLI::App &app) {
 
     add_subcommand->callback([&]() {
         if (!check_repository_category_string(this->repository_category)) {
-            std::cout << colors::red << "The category " << this->repository_category << " is not valid. The valid categories are: created, idle, working, and finished." << std::endl;
+            std::cout << colors::red << "The category " << this->repository_category << " is not valid. The valid categories are: created, idle, working, finished, and others." << std::endl;
 
             return;
         }
@@ -43,7 +43,7 @@ void Commands::remove(CLI::App &app) {
     remove_subcommand->add_option("name", this->repositories_names, "Repositories to remove")->required();
 
     remove_subcommand->callback([&]() {
-        store::remove_repository(this->repositories_names);
+        store::remove_repositories(this->repositories_names);
 
         std::cout << colors::green << "Finished removing the repositories" << std::endl;
     });
@@ -66,7 +66,7 @@ void Commands::update(CLI::App &app) {
 
     update_subcommand->callback([&]() {
         if (!check_repository_category_string(this->repository_category)) {
-            std::cout << colors::red << "The category " << this->repository_category << " is not valid. The valid categories are: created, idle, working, and finished." << std::endl;
+            std::cout << colors::red << "The category " << this->repository_category << " is not valid. The valid categories are: created, idle, working, finished, and others." << std::endl;
 
             return;
         }
