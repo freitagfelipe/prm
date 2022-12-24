@@ -71,13 +71,9 @@ void Commands::update(CLI::App &app) {
             return;
         }
 
-        std::cout << colors::green << "Updating the following repositories to the category " << this->repository_category << ":";
-        
-        for (std::string repository_name : this->repositories_names) {
-            std::cout << " " << repository_name;
-        }
+        store::update_repositories(this->repositories_names, this->repository_category);
 
-        std::cout << std::endl;
+        std::cout << colors::green << "Finished updating the repositories to the category " << this->repository_category << std::endl;
     });
 }
 
