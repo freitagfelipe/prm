@@ -16,7 +16,7 @@ bool check_repository_category_string(std::string &category) {
 }
 
 void Commands::add(CLI::App &app) {
-    CLI::App *add_subcommand {app.add_subcommand("add", "Add a repository")};
+    CLI::App *add_subcommand {app.add_subcommand("add", "Adds a repository")};
 
     add_subcommand->add_option("name", this->repository_name, "Repository name")->required();
 
@@ -38,7 +38,7 @@ void Commands::add(CLI::App &app) {
 }
 
 void Commands::remove(CLI::App &app) {
-    CLI::App *remove_subcommand {app.add_subcommand("remove", "Remove a repository")};
+    CLI::App *remove_subcommand {app.add_subcommand("remove", "Removes a repository")};
 
     remove_subcommand->add_option("name", this->repositories_names, "Repositories to remove")->required();
 
@@ -50,7 +50,7 @@ void Commands::remove(CLI::App &app) {
 }
 
 void Commands::status(CLI::App &app) {
-    CLI::App *status_subcommand {app.add_subcommand("status", "The status of your repositories")};
+    CLI::App *status_subcommand {app.add_subcommand("status", "Shows all your repositories and their categories")};
 
     status_subcommand->callback([&]() {
         store::print_repositories();
@@ -58,7 +58,7 @@ void Commands::status(CLI::App &app) {
 }
 
 void Commands::update(CLI::App &app) {
-    CLI::App *update_subcommand {app.add_subcommand("update", "Update the category of the given repositories")};
+    CLI::App *update_subcommand {app.add_subcommand("update", "Updates the category of your repositories")};
 
     update_subcommand->add_option("name", this->repositories_names, "Repositories to update");
 
@@ -78,7 +78,7 @@ void Commands::update(CLI::App &app) {
 }
 
 void Commands::clone(CLI::App &app) {
-    CLI::App *clone_subcommand {app.add_subcommand("clone", "Clone the given repository in the current directory")};
+    CLI::App *clone_subcommand {app.add_subcommand("clone", "Clones a repository in the current directory")};
 
     clone_subcommand->add_option("name", this->repository_name, "The name of the repository to clone")->required();
 
@@ -136,7 +136,7 @@ void Commands::todo_update(CLI::App *todo_subcommand) {
 }
 
 void Commands::todo(CLI::App &app) {
-    CLI::App *todo_subcommand {app.add_subcommand("todo", "Manage To Do for your repositories")};
+    CLI::App *todo_subcommand {app.add_subcommand("todo", "Manages the To Do of your repositories")};
 
     todo_subcommand->add_option("name", this->repository_name, "The name of the repository")->required();
 
