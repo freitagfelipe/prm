@@ -8,18 +8,20 @@
 const std::string name_key {"name"};
 const std::string link_key {"link"};
 
-bool remove_repository(nlohmann::json &j, std::string &repository) {
+std::pair<bool, nlohmann::json> remove_repository(nlohmann::json &j, std::string &repository) {
     auto it {std::find_if(j.begin(), j.end(), [&](nlohmann::json &val) {
         return val[name_key].get<std::string>() == repository;
     })};
 
     if (it != j.end()) {
+        nlohmann::json old_value {*it};
+
         j.erase(it);
 
-        return true;
+        return {true, old_value};
     }
 
-    return false;
+    return {false, {}};
 }
 
 void store::add_repository(std::string &name, std::string &repository_link, std::string &category) {
@@ -133,7 +135,7 @@ void store::remove_repositories(std::vector<std::string> &repositories) {
         bool removed {};
 
         for (auto &[curr_category, curr_value] : j.items()) {
-            if (remove_repository(curr_value, repository)) {
+            if (remove_repository(curr_value, repository).first) {
                 removed = true;
 
                 break;
@@ -146,6 +148,48 @@ void store::remove_repositories(std::vector<std::string> &repositories) {
             std::cout << colors::green << "Removed the repository " << repository << std::endl;
         }
     }
+
+    f.close();
+
+    f = utils::open_config_file(std::ios::out);
+
+    f << std::setw(4) << j;
+}
+
+void store::update_repositories(std::vector<std::string> &repositories, std::string &new_category) {
+    std::fstream f {utils::open_config_file(std::ios::in | std::ios::out)};
+
+    nlohmann::json j {nlohmann::json::parse(f)};
+
+    j = j.at(0);
+
+    std::vector<nlohmann::json> removed_repositories;
+
+    for (std::string &repository : repositories) {
+        bool removed {};
+        nlohmann::json old_value {};
+
+        for (auto &[key, val] : j.items()) {
+            auto [erased, aux] = remove_repository(val, repository);
+
+            if (erased) {
+                old_value = aux;
+                removed = true;
+
+                break;
+            }
+        }
+
+        if (!removed) {
+            std::cerr << colors::red << "Can't find the repository " << repository << std::endl;
+        } else {
+            removed_repositories.push_back(old_value);
+        }
+    }
+
+    j[new_category] = removed_repositories;
+
+    std::sort(j[new_category].begin(), j[new_category].end());
 
     f.close();
 
