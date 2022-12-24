@@ -1,17 +1,11 @@
 #include <setup.hpp>
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
+#include <utils.hpp>
 #include <nlohmann/json.hpp>
 #include <colors.hpp>
+#include <fstream>
 
 void setup::init() {
-    std::fstream f;
-
-    f.open(".prm.json", std::ios::in);
-
-    if (f.is_open()) {
+    if (utils::check_if_config_file_exists()) {
         return;
     }
 
@@ -23,15 +17,7 @@ void setup::init() {
         {"others",nlohmann::json::array()}
     };
 
-    f.open(".prm.json", std::ios::out);
+    std::fstream f {utils::open_config_file(std::ios::out)};
 
-    if (f.is_open()) {
-        f << std::setw(4) << j;
-
-        return;
-    }
-
-    std::cerr << colors::red << "Can't open the file" << std::endl;
-
-    std::exit(1);
+    f << std::setw(4) << j;
 }

@@ -1,23 +1,29 @@
 #include <store.hpp>
+#include <utils.hpp>
 #include <nlohmann/json.hpp>
 #include <colors.hpp>
 #include <fstream>
 #include <iostream>
-#include <vector>
 
 const std::string name_key {"name"};
 const std::string link_key {"link"};
 
-void store::add_repository(std::string &name, std::string &repository_link, std::string &category) {
-    std::fstream f;
+bool remove_repository(nlohmann::json &j, std::string &repository) {
+    auto it {std::find_if(j.begin(), j.end(), [&](nlohmann::json &val) {
+        return val[name_key].get<std::string>() == repository;
+    })};
 
-    f.open(".prm.json", std::ios::in | std::ios::out);
+    if (it != j.end()) {
+        j.erase(it);
 
-    if (!f.is_open()) {
-        std::cerr << colors::red << "Can't open the file" << std::endl;
-
-        std::exit(1);
+        return true;
     }
+
+    return false;
+}
+
+void store::add_repository(std::string &name, std::string &repository_link, std::string &category) {
+    std::fstream f {utils::open_config_file(std::ios::in | std::ios::out)};
 
     nlohmann::json j {nlohmann::json::parse(f)};
     nlohmann::json new_value = {
@@ -52,15 +58,7 @@ void store::add_repository(std::string &name, std::string &repository_link, std:
 }
 
 void store::print_repositories() {
-    std::fstream f;
-
-    f.open(".prm.json", std::ios::in);
-
-    if (!f.is_open()) {
-        std::cerr << colors::red << "Can't open the file" << std::endl;
-
-        std::exit(1);
-    }
+    std::fstream f {utils::open_config_file(std::ios::in)};
 
     nlohmann::json j {nlohmann::json::parse(f)};
 
@@ -84,15 +82,7 @@ void store::print_repositories() {
 }
 
 void store::clone_repository(std::string &name) {
-    std::fstream f;
-
-    f.open(".prm.json", std::ios::in);
-
-    if (!f.is_open()) {
-        std::cerr << colors::red << "Can't open the file" << std::endl;
-
-        std::exit(1);
-    }
+    std::fstream f {utils::open_config_file(std::ios::in)};
 
     nlohmann::json j {nlohmann::json::parse(f)};
 
@@ -132,18 +122,8 @@ void store::clone_repository(std::string &name) {
 }
 
 
-void store::remove_repository(std::vector<std::string> &repositories) {
-    (void) repositories;
-
-    std::fstream f;
-
-    f.open(".prm.json", std::ios::in | std::ios::out);
-
-    if (!f.is_open()) {
-        std::cerr << colors::red << "Can't open the file" << std::endl;
-
-        std::exit(1);
-    }
+void store::remove_repositories(std::vector<std::string> &repositories) {
+    std::fstream f {utils::open_config_file(std::ios::in | std::ios::out)};
 
     nlohmann::json j {nlohmann::json::parse(f)};
 
@@ -153,15 +133,9 @@ void store::remove_repository(std::vector<std::string> &repositories) {
         bool removed {};
 
         for (auto &[curr_category, curr_value] : j.items()) {
-            auto it {std::find_if(curr_value.begin(), curr_value.end(), [&](nlohmann::json &val) {
-                return val[name_key].get<std::string>() == repository;
-            })};
-
-            if (it != curr_value.end()) {
-                curr_value.erase(it);
-
+            if (remove_repository(curr_value, repository)) {
                 removed = true;
-                
+
                 break;
             }
         }
@@ -175,13 +149,7 @@ void store::remove_repository(std::vector<std::string> &repositories) {
 
     f.close();
 
-    f.open(".prm.json", std::ios::out);
-
-    if (!f.is_open()) {
-        std::cerr << colors::red << "Can't open the file" << std::endl;
-
-        std::exit(1);
-    }
+    f = utils::open_config_file(std::ios::out);
 
     f << std::setw(4) << j;
 }
