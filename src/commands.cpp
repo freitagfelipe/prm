@@ -88,3 +88,66 @@ void Commands::clone(CLI::App &app) {
         std::cout << colors::green << "Cloned " << this->repository_name << " in the current directory" << std::endl;
     });
 }
+
+void Commands::todo_add(CLI::App *todo_subcommand) {
+    CLI::App *todo_add_subcommand {todo_subcommand->add_subcommand("add", "Adds a To Do for the given repository")};
+
+    todo_add_subcommand->add_option("-g,--goal", this->todo_goal, "The objective of the To Do")->required();
+
+    todo_add_subcommand->callback([&]() {
+        std::cout << colors::green << "Adding the following To Do " << this->todo_goal << " to the following repository " << this->repository_name << std::endl;
+    });
+}
+
+void Commands::todo_remove(CLI::App *todo_subcommand) {
+    CLI::App *todo_remove_subcommand {todo_subcommand->add_subcommand("remove", "Removes To Dos of the given repository")};
+
+    todo_remove_subcommand->add_option("-n,--number", this->todo_numbers, "The number of the To-Do")->required();
+
+    todo_remove_subcommand->callback([&]() {
+        std::cout << colors::green << "Removing the following To Dos of the repository " << this->repository_name << ":";
+
+        for (int todo_number : this->todo_numbers) {
+            std::cout << ' ' << todo_number;
+        }
+
+        std::cout << std::endl;
+    });
+}
+
+void Commands::todo_status(CLI::App *todo_subcommand) {
+    CLI::App *todo_status_subcommand {todo_subcommand->add_subcommand("status", "Shows all To Dos of the given repository")};
+
+    todo_status_subcommand->callback([&]() {
+        std::cout << colors::green << "Showing the To Dos of the repository " << this->repository_name << std::endl;
+    });
+}
+
+void Commands::todo_update(CLI::App *todo_subcommand) {
+    CLI::App *todo_update_subcommand {todo_subcommand->add_subcommand("update", "Updates a To Do of the given repository")};
+
+    todo_update_subcommand->add_option("-n,--number", this->todo_number, "The number of the To Do to be updated")->required();
+
+    todo_update_subcommand->add_option("-g,--goal", this->todo_goal, "The objective of the To Do")->required();
+
+    todo_update_subcommand->callback([&]() {
+        std::cout << colors::green << "Updating the To Do of number " << this->todo_number << " of the repository " << this->repository_name << " with the following task " << this->todo_goal << std::endl;
+    });
+}
+
+void Commands::todo(CLI::App &app) {
+    CLI::App *todo_subcommand {app.add_subcommand("todo", "Manage To Do for your repositories")};
+
+    todo_subcommand->add_option("name", this->repository_name, "The name of the repository")->required();
+
+    this->todo_add(todo_subcommand);
+    this->todo_remove(todo_subcommand);
+    this->todo_status(todo_subcommand);
+    this->todo_update(todo_subcommand);
+
+    todo_subcommand->preparse_callback([](size_t arg_count) {
+        if (arg_count == 1) {
+            throw CLI::CallForHelp();
+        }
+    });
+}
