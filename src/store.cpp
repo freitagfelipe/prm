@@ -183,11 +183,13 @@ void store::update_repositories(std::vector<std::string> &repositories, std::str
         if (!removed) {
             std::cerr << colors::red << "Can't find the repository " << repository << std::endl;
         } else {
-            removed_repositories.push_back(old_value);
+            removed_repositories.push_back(old_value.at(0));
         }
     }
 
-    j[new_category] = removed_repositories;
+    for (nlohmann::json &removed_repository : removed_repositories) {
+        j[new_category].push_back(removed_repository);
+    }
 
     std::sort(j[new_category].begin(), j[new_category].end());
 
