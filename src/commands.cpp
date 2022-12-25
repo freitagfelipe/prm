@@ -4,9 +4,7 @@
 #include <iostream>
 
 bool check_repository_category_string(std::string &category) {
-    std::string valid_categories[] = {"created", "idle", "working", "finished", "others"};
-
-    for (const std::string &valid_category : valid_categories) {
+    for (const std::string &valid_category : store::VALID_CATEGORIES) {
         if (valid_category == category) {
             return true;
         }

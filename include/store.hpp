@@ -4,6 +4,8 @@
 #include <vector>
 
 namespace store {
+    const std::vector<std::string> VALID_CATEGORIES {"created", "idle", "working", "finished", "others"};
+
     void add_repository(std::string &name, std::string &clone_link, std::string &category);
     void remove_repositories(std::vector<std::string> &repositories);
     void update_repositories(std::vector<std::string> &repositories, std::string &new_category);

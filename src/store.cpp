@@ -47,12 +47,12 @@ void store::add_repository(std::string &name, std::string &repository_link, std:
 
     j = j.at(0);
 
-    for (auto &[curr_category, curr_value] : j.items()) { 
-        if (curr_value.is_null()) {
+    for (const std::string &curr_category : store::VALID_CATEGORIES) {
+        if (j[curr_category].is_null()) {
             continue;
         }
 
-        for (auto &[_, value] : curr_value.items()) {
+        for (auto &[_, value] : j[curr_category].items()) {
             if (value[name_key] == name) {
                 std::cerr << colors::red << "You already have this repository!" << std::endl;
 
@@ -62,6 +62,7 @@ void store::add_repository(std::string &name, std::string &repository_link, std:
     }
 
     j[category].push_back(new_value);
+    j[todo_key][name] = nlohmann::json::array();
 
     std::sort(j[category].begin(), j[category].end());
 
@@ -146,8 +147,10 @@ void store::remove_repositories(std::vector<std::string> &repositories) {
     for (std::string &repository : repositories) {
         bool removed {};
 
-        for (auto &[curr_category, curr_value] : j.items()) {
-            if (remove_repository(curr_value, repository).first) {
+        for (const std::string &category : store::VALID_CATEGORIES) {
+            if (remove_repository(j[category], repository).first) {
+                j[todo_key].erase(repository);
+
                 removed = true;
 
                 break;
