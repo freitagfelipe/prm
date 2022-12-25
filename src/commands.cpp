@@ -121,7 +121,7 @@ void Commands::todo_status(CLI::App *todo_subcommand) {
     CLI::App *todo_status_subcommand {todo_subcommand->add_subcommand("status", "Shows all To Dos of the given repository")};
 
     todo_status_subcommand->callback([&]() {
-        std::cout << colors::green << "Showing the To Dos of the repository " << this->repository_name << std::endl;
+        store::print_todo(this->repository_name);
     });
 }
 
