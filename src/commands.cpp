@@ -92,10 +92,12 @@ void Commands::clone(CLI::App &app) {
 void Commands::todo_add(CLI::App *todo_subcommand) {
     CLI::App *todo_add_subcommand {todo_subcommand->add_subcommand("add", "Adds a To Do for the given repository")};
 
-    todo_add_subcommand->add_option("-g,--goal", this->todo_goal, "The objective of the To Do")->required();
+    todo_add_subcommand->add_option("goal", this->todo_goal, "The objective of the To Do")->required();
 
     todo_add_subcommand->callback([&]() {
-        std::cout << colors::green << "Adding the following To Do " << this->todo_goal << " to the following repository " << this->repository_name << std::endl;
+        store::add_todo(this->repository_name, this->todo_goal);
+
+        std::cout << colors::green << "Added the given To Do in the repository " << this->repository_name << std::endl;
     });
 }
 
