@@ -26,5 +26,3 @@ private:
     void todo_status(CLI::App *todo_subcommand);
     void todo_update(CLI::App *todo_subcommand);
 };
-
-bool check_repository_category_string(std::string &category);
