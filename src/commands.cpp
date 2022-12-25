@@ -124,12 +124,14 @@ void Commands::todo_status(CLI::App *todo_subcommand) {
 void Commands::todo_update(CLI::App *todo_subcommand) {
     CLI::App *todo_update_subcommand {todo_subcommand->add_subcommand("update", "Updates a To Do of the given repository")};
 
+    todo_update_subcommand->add_option("goal", this->todo_goal, "The new objective of the To Do")->required();
+
     todo_update_subcommand->add_option("-n,--number", this->todo_number, "The number of the To Do to be updated")->required();
 
-    todo_update_subcommand->add_option("-g,--goal", this->todo_goal, "The objective of the To Do")->required();
-
     todo_update_subcommand->callback([&]() {
-        std::cout << colors::green << "Updating the To Do of number " << this->todo_number << " of the repository " << this->repository_name << " with the following task " << this->todo_goal << std::endl;
+        store::update_todo(this->repository_name, this->todo_number, this->todo_goal);
+
+        std::cout << colors::green << "Updated the To Do of the repository " << this->repository_name << std::endl;
     });
 }
 
