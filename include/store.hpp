@@ -10,4 +10,5 @@ namespace store {
     void clone_repository(std::string &name);
     void print_repositories();
     void add_todo(std::string &name, std::string &goal);
+    void print_todo(std::string &name);
 }

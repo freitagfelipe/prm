@@ -224,3 +224,21 @@ void store::add_todo(std::string &name, std::string &goal) {
 
     f << std::setw(4) << j;
 }
+
+void store::print_todo(std::string &name) {
+    std::fstream f {utils::open_config_file(std::ios::in | std::ios::out)};
+
+    nlohmann::json j {nlohmann::json::parse(f)};
+
+    j = j.at(0);
+
+    if (j[todo_key][name].size() == 0) {
+        std::cerr << colors::red << "The repository " << name << " doesn't have any To Dos" << std::endl;
+
+        std::exit(2);
+    }
+
+    for (auto &[i, goal] : j[todo_key][name].items()) {
+        std::cout << colors::cyan << std::stoi(i) + 1 << ". " << colors::white << goal.get<std::string>() << std::endl;
+    }
+}
