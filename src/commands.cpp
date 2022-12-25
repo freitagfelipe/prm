@@ -18,7 +18,7 @@ void Commands::add(CLI::App &app) {
 
     add_subcommand->add_option("name", this->repository_name, "Repository name")->required();
 
-    add_subcommand->add_option("-l,--link", this->repository_link, "The link to clone the given repository")->required();
+    add_subcommand->add_option("-l,--link", this->repository_clone_link, "The link to clone the given repository")->required();
 
     add_subcommand->add_option("-c,--category", this->repository_category, "The category of the repositories (\"created\" | \"idle\" | \"working\" | \"finished\" | \"others\")")->capture_default_str();
 
@@ -29,7 +29,7 @@ void Commands::add(CLI::App &app) {
             return;
         }
 
-        store::add_repository(this->repository_name, this->repository_link, this->repository_category);
+        store::add_repository(this->repository_name, this->repository_clone_link, this->repository_category);
 
         std::cout << colors::green << "Successfully added the repository in the " << this->repository_category << "!" << std::endl;
     });

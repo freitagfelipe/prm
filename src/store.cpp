@@ -38,10 +38,10 @@ bool check_if_can_insert_goal(nlohmann::json &j, std::string &name, std::string 
     return true;
 }
 
-void store::add_repository(std::string &name, std::string &repository_link, std::string &category) {
+void store::add_repository(std::string &name, std::string &repository_clone_link, std::string &category) {
     std::regex regex(REGEX_PATTERN);
 
-    if (!std::regex_match(repository_link, regex)) {
+    if (!std::regex_match(repository_clone_link, regex)) {
         std::cerr << colors::red << "Invalid repository link, must be a ssh clone link for the github or gitlab" << std::endl;
 
         std::exit(2);
@@ -51,7 +51,7 @@ void store::add_repository(std::string &name, std::string &repository_link, std:
 
     nlohmann::json j {nlohmann::json::parse(f)};
     nlohmann::json new_value = {
-        {LINK_KEY, repository_link},
+        {LINK_KEY, repository_clone_link},
         {NAME_KEY, name}
     };
 
