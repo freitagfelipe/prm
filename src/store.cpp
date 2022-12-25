@@ -7,6 +7,7 @@
 
 const std::string name_key {"name"};
 const std::string link_key {"link"};
+const std::string todo_key {"todo"};
 
 std::pair<bool, nlohmann::json> remove_repository(nlohmann::json &j, std::string &repository) {
     auto it {std::find_if(j.begin(), j.end(), [&](nlohmann::json &val) {
@@ -192,6 +193,30 @@ void store::update_repositories(std::vector<std::string> &repositories, std::str
     }
 
     std::sort(j[new_category].begin(), j[new_category].end());
+
+    f.close();
+
+    f = utils::open_config_file(std::ios::out);
+
+    f << std::setw(4) << j;
+}
+
+void store::add_todo(std::string &name, std::string &goal) {
+    std::fstream f {utils::open_config_file(std::ios::in | std::ios::out)};
+
+    nlohmann::json j {nlohmann::json::parse(f)};
+
+    j = j.at(0);
+
+    for (auto &[_, curr_goal] : j[todo_key][name].items()) {
+        if (curr_goal.get<std::string>() == goal) {
+            std::cerr << colors::red << "The given To Do is already inserted in the repository " << name << std::endl;
+
+            std::exit(2);
+        }
+    }
+
+    j[todo_key][name].push_back(goal);
 
     f.close();
 

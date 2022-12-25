@@ -9,4 +9,5 @@ namespace store {
     void update_repositories(std::vector<std::string> &repositories, std::string &new_category);
     void clone_repository(std::string &name);
     void print_repositories();
+    void add_todo(std::string &name, std::string &goal);
 }
