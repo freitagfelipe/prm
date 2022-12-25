@@ -6,13 +6,13 @@
 #include <iostream>
 #include <set>
 
-const std::string name_key {"name"};
-const std::string link_key {"link"};
-const std::string todo_key {"todo"};
+const std::string NAME_KEY {"name"};
+const std::string LINK_KEY {"link"};
+const std::string TODO_KEY {"todo"};
 
 std::pair<bool, nlohmann::json> remove_repository(nlohmann::json &j, std::string &repository) {
     auto it {std::find_if(j.begin(), j.end(), [&](nlohmann::json &val) {
-        return val[name_key].get<std::string>() == repository;
+        return val[NAME_KEY].get<std::string>() == repository;
     })};
 
     if (it != j.end()) {
@@ -27,7 +27,7 @@ std::pair<bool, nlohmann::json> remove_repository(nlohmann::json &j, std::string
 }
 
 bool check_if_can_insert_goal(nlohmann::json &j, std::string &name, std::string &goal) {
-    for (auto &[_, curr_goal] : j[todo_key][name].items()) {
+    for (auto &[_, curr_goal] : j[TODO_KEY][name].items()) {
         if (curr_goal.get<std::string>() == goal) {
             return false;
         }
@@ -41,8 +41,8 @@ void store::add_repository(std::string &name, std::string &repository_link, std:
 
     nlohmann::json j {nlohmann::json::parse(f)};
     nlohmann::json new_value = {
-        {link_key, repository_link},
-        {name_key, name}
+        {LINK_KEY, repository_link},
+        {NAME_KEY, name}
     };
 
     j = j.at(0);
@@ -53,7 +53,7 @@ void store::add_repository(std::string &name, std::string &repository_link, std:
         }
 
         for (auto &[_, value] : j[curr_category].items()) {
-            if (value[name_key] == name) {
+            if (value[NAME_KEY] == name) {
                 std::cerr << colors::red << "You already have this repository!" << std::endl;
 
                 std::exit(2);
@@ -62,7 +62,7 @@ void store::add_repository(std::string &name, std::string &repository_link, std:
     }
 
     j[category].push_back(new_value);
-    j[todo_key][name] = nlohmann::json::array();
+    j[TODO_KEY][name] = nlohmann::json::array();
 
     std::sort(j[category].begin(), j[category].end());
 
@@ -109,7 +109,7 @@ void store::clone_repository(std::string &name) {
         }
 
         for (auto &[_, value] : curr_value.items()) {
-            if (value[name_key] == name) {
+            if (value[NAME_KEY] == name) {
                 if (std::system("git 2> /dev/null 1> /dev/null") != 256) {
                     std::cerr << colors::red << "You should have git installed to execute this command" << std::endl;
 
@@ -118,7 +118,7 @@ void store::clone_repository(std::string &name) {
 
                 std::stringstream ss;
 
-                ss << "git clone " << value[link_key].get<std::string>() << " 2> /dev/null 1> /dev/null";
+                ss << "git clone " << value[LINK_KEY].get<std::string>() << " 2> /dev/null 1> /dev/null";
 
                 if (std::system(ss.str().c_str()) == 32768) {
                     std::cerr << colors::red << "You already have this repository in the current directory" << std::endl;
@@ -149,7 +149,7 @@ void store::remove_repositories(std::vector<std::string> &repositories) {
 
         for (const std::string &category : store::VALID_CATEGORIES) {
             if (remove_repository(j[category], repository).first) {
-                j[todo_key].erase(repository);
+                j[TODO_KEY].erase(repository);
 
                 removed = true;
 
@@ -228,7 +228,7 @@ void store::add_todo(std::string &name, std::string &goal) {
         std::exit(2);
     }
 
-    j[todo_key][name].push_back(goal);
+    j[TODO_KEY][name].push_back(goal);
 
     f.close();
 
@@ -244,13 +244,13 @@ void store::print_todo(std::string &name) {
 
     j = j.at(0);
 
-    if (j[todo_key][name].size() == 0) {
+    if (j[TODO_KEY][name].size() == 0) {
         std::cerr << colors::red << "The repository " << name << " doesn't have any To Dos" << std::endl;
 
         std::exit(2);
     }
 
-    for (auto &[i, goal] : j[todo_key][name].items()) {
+    for (auto &[i, goal] : j[TODO_KEY][name].items()) {
         std::cout << colors::cyan << std::stoi(i) + 1 << ". " << colors::white << goal.get<std::string>() << std::endl;
     }
 }
@@ -262,7 +262,7 @@ void store::remove_todo(std::string &name, std::vector<int> &todo_numbers) {
 
     j = j.at(0);
 
-    if (j[todo_key][name].size() == 0) {
+    if (j[TODO_KEY][name].size() == 0) {
         std::cerr << colors::red << "The repository " << name << " doesn't have any To Dos" << std::endl;
 
         std::exit(2);
@@ -277,13 +277,13 @@ void store::remove_todo(std::string &name, std::vector<int> &todo_numbers) {
             continue;
         }
 
-        if (number <= 0 || number - removed_numbers.size() > j[todo_key][name].size()) {
+        if (number <= 0 || number - removed_numbers.size() > j[TODO_KEY][name].size()) {
             std::cerr << colors::red << "The To Do of number " << number << " doesn't exist" << std::endl;
 
             continue;
         }
 
-        j[todo_key][name].erase((number - removed_numbers.size()) - 1);
+        j[TODO_KEY][name].erase((number - removed_numbers.size()) - 1);
 
         removed_numbers.insert(number);
 
@@ -304,11 +304,11 @@ void store::update_todo(std::string &name, int todo_number, std::string &new_goa
 
     j = j.at(0);
 
-    if (j[todo_key][name].size() == 0) {
+    if (j[TODO_KEY][name].size() == 0) {
         std::cerr << colors::red << "The repository " << name << " doesn't have any To Dos" << std::endl;
 
         std::exit(2);
-    } else if (todo_number <= 0 || size_t(todo_number) > j[todo_key][name].size()) {
+    } else if (todo_number <= 0 || size_t(todo_number) > j[TODO_KEY][name].size()) {
         std::cerr << colors::red << "The To Do of number " << todo_number << " doesn't exist" << std::endl;
 
         std::exit(2);
@@ -318,7 +318,7 @@ void store::update_todo(std::string &name, int todo_number, std::string &new_goa
         std::exit(2);
     }
 
-    j[todo_key][name][todo_number - 1] = new_goal;
+    j[TODO_KEY][name][todo_number - 1] = new_goal;
 
     f.close();
 
