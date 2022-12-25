@@ -104,16 +104,12 @@ void Commands::todo_add(CLI::App *todo_subcommand) {
 void Commands::todo_remove(CLI::App *todo_subcommand) {
     CLI::App *todo_remove_subcommand {todo_subcommand->add_subcommand("remove", "Removes To Dos of the given repository")};
 
-    todo_remove_subcommand->add_option("-n,--number", this->todo_numbers, "The number of the To-Do")->required();
+    todo_remove_subcommand->add_option("numbers", this->todo_numbers, "A list of To Do numbers")->required();
 
     todo_remove_subcommand->callback([&]() {
-        std::cout << colors::green << "Removing the following To Dos of the repository " << this->repository_name << ":";
+        store::remove_todo(this->repository_name, this->todo_numbers);
 
-        for (int todo_number : this->todo_numbers) {
-            std::cout << ' ' << todo_number;
-        }
-
-        std::cout << std::endl;
+        std::cout << colors::green << "Finished removing the To Dos of the repository " << this->repository_name << std::endl;
     });
 }
 
