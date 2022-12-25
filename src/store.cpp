@@ -5,10 +5,12 @@
 #include <fstream>
 #include <iostream>
 #include <set>
+#include <regex>
 
 const std::string NAME_KEY {"name"};
 const std::string LINK_KEY {"link"};
 const std::string TODO_KEY {"todo"};
+const std::string REGEX_PATTERN {"git@git((hub)|(lab))\\.com:\\S*\\/\\S*\\.git"};
 
 std::pair<bool, nlohmann::json> remove_repository(nlohmann::json &j, std::string &repository) {
     auto it {std::find_if(j.begin(), j.end(), [&](nlohmann::json &val) {
@@ -37,6 +39,14 @@ bool check_if_can_insert_goal(nlohmann::json &j, std::string &name, std::string 
 }
 
 void store::add_repository(std::string &name, std::string &repository_link, std::string &category) {
+    std::regex regex(REGEX_PATTERN);
+
+    if (!std::regex_match(repository_link, regex)) {
+        std::cerr << colors::red << "Invalid repository link, must be a ssh clone link for the github or gitlab" << std::endl;
+
+        std::exit(2);
+    }
+
     std::fstream f {utils::open_config_file(std::ios::in | std::ios::out)};
 
     nlohmann::json j {nlohmann::json::parse(f)};
@@ -135,7 +145,6 @@ void store::clone_repository(std::string &name) {
 
     std::exit(2);
 }
-
 
 void store::remove_repositories(std::vector<std::string> &repositories) {
     std::fstream f {utils::open_config_file(std::ios::in | std::ios::out)};
