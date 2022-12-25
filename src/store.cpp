@@ -26,6 +26,16 @@ std::pair<bool, nlohmann::json> remove_repository(nlohmann::json &j, std::string
     return {false, {}};
 }
 
+bool check_if_can_insert_goal(nlohmann::json &j, std::string &name, std::string &goal) {
+    for (auto &[_, curr_goal] : j[todo_key][name].items()) {
+        if (curr_goal.get<std::string>() == goal) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 void store::add_repository(std::string &name, std::string &repository_link, std::string &category) {
     std::fstream f {utils::open_config_file(std::ios::in | std::ios::out)};
 
@@ -209,12 +219,10 @@ void store::add_todo(std::string &name, std::string &goal) {
 
     j = j.at(0);
 
-    for (auto &[_, curr_goal] : j[todo_key][name].items()) {
-        if (curr_goal.get<std::string>() == goal) {
-            std::cerr << colors::red << "The given To Do is already inserted in the repository " << name << std::endl;
+    if (!check_if_can_insert_goal(j, name, goal)) {
+        std::cerr << colors::red << "The given To Do is already inserted in the repository " << name << std::endl;
 
-            std::exit(2);
-        }
+        std::exit(2);
     }
 
     j[todo_key][name].push_back(goal);
@@ -278,6 +286,36 @@ void store::remove_todo(std::string &name, std::vector<int> &todo_numbers) {
 
         std::cout << colors::green << "Removed the To Do of number " << number << std::endl;
     }
+
+    f.close();
+
+    f = utils::open_config_file(std::ios::out);
+
+    f << std::setw(4) << j;
+}
+
+void store::update_todo(std::string &name, int todo_number, std::string &new_goal) {
+    std::fstream f {utils::open_config_file(std::ios::in | std::ios::out)};
+
+    nlohmann::json j {nlohmann::json::parse(f)};
+
+    j = j.at(0);
+
+    if (j[todo_key][name].size() == 0) {
+        std::cerr << colors::red << "The repository " << name << " doesn't have any To Dos" << std::endl;
+
+        std::exit(2);
+    } else if (todo_number <= 0 || size_t(todo_number) > j[todo_key][name].size()) {
+        std::cerr << colors::red << "The To Do of number " << todo_number << " doesn't exist" << std::endl;
+
+        std::exit(2);
+    } else if (!check_if_can_insert_goal(j, name, new_goal)) {
+        std::cerr << colors::red << "The given To Do is already inserted in the repository " << name << std::endl;
+
+        std::exit(2);
+    }
+
+    j[todo_key][name][todo_number - 1] = new_goal;
 
     f.close();
 

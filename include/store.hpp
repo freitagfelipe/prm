@@ -11,5 +11,6 @@ namespace store {
     void print_repositories();
     void add_todo(std::string &name, std::string &goal);
     void remove_todo(std::string &name, std::vector<int> &todo_numbers);
+    void update_todo(std::string &name, int todo_number, std::string &new_goal);
     void print_todo(std::string &name);
 }
