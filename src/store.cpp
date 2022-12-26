@@ -38,6 +38,12 @@ bool check_if_can_insert_goal(nlohmann::json &j, std::string &name, std::string 
     return true;
 }
 
+void sort_json_category(nlohmann::json &j) {
+    std::sort(j.begin(), j.end(), [](const nlohmann::json &a, const nlohmann::json &b) {
+        return a[NAME_KEY] < b[NAME_KEY];
+    });
+}
+
 void store::add_repository(std::string &name, std::string &repository_clone_link, std::string &category) {
     std::regex regex(REGEX_PATTERN);
 
@@ -74,7 +80,7 @@ void store::add_repository(std::string &name, std::string &repository_clone_link
     j[category].push_back(new_value);
     j[TODO_KEY][name] = nlohmann::json::array();
 
-    std::sort(j[category].begin(), j[category].end());
+    sort_json_category(j[category]);
 
     f.seekp(0);
     f.clear();
@@ -180,48 +186,76 @@ void store::remove_repositories(std::vector<std::string> &repositories) {
     f << std::setw(4) << j;
 }
 
-void store::update_repositories(std::vector<std::string> &repositories, std::string &new_category) {
+void store::update_repository(std::string &name, std::string &new_name, std::string &new_repository_clone_link, std::string &new_category) {
+    std::regex regex(REGEX_PATTERN);
+
+    if (new_repository_clone_link != "" && !std::regex_match(new_repository_clone_link, regex)) {
+        std::cerr << colors::red << "Invalid repository link, must be a ssh clone link for the github or gitlab" << std::endl;
+
+        std::exit(2);
+    } else if (name == new_name) {
+        std::cerr << colors::red << "The new given name is equals the old name, so nothing changes" << std::endl;
+    }
+
     std::fstream f {utils::open_config_file(std::ios::in | std::ios::out)};
 
     nlohmann::json j {nlohmann::json::parse(f)};
 
     j = j.at(0);
 
-    std::vector<nlohmann::json> removed_repositories;
-
-    for (std::string &repository : repositories) {
-        bool removed {};
-        nlohmann::json old_value {};
-
-        for (auto &[key, val] : j.items()) {
-            auto [erased, aux] = remove_repository(val, repository);
-
-            if (erased) {
-                old_value = aux;
-                removed = true;
-
-                break;
+    for (const std::string &category : VALID_CATEGORIES) {
+        for (auto &[_, val] : j[category].items()) {
+            if (val[NAME_KEY].get<std::string>() != name) {
+                continue;
             }
-        }
 
-        if (!removed) {
-            std::cerr << colors::red << "Can't find the repository " << repository << std::endl;
-        } else {
-            removed_repositories.push_back(old_value.at(0));
+            if (new_name != "" && new_name != val[NAME_KEY].get<std::string>()) {
+                val[NAME_KEY] = new_name;
+                j[TODO_KEY][new_name] = j[TODO_KEY][name];
+                j[TODO_KEY].erase(name);
+
+                std::cout << colors::green << "Updated the repository name" << std::endl;
+            }
+
+            if (new_repository_clone_link == val[LINK_KEY]) {
+                std::cerr << colors::red << "The new given clone link is equal to the old clone link, so nothing changes" << std::endl;
+            } else if (new_repository_clone_link != "") {
+                val[LINK_KEY] = new_repository_clone_link;
+
+                std::cout << colors::green << "Updated the repository clone link" << std::endl;
+            }
+
+            if (new_category == category) {
+                std::cerr << colors::red << "The new given category is equal to the old category, so nothing changes" << std::endl;
+            }
+
+            if (new_category == category || new_category == "") {
+                sort_json_category(j[category]);
+            } else {
+                std::string target_name {new_name != "" ? new_name : name};
+
+                auto [erased, old_val] = remove_repository(j[category], target_name);
+
+                j[new_category].push_back(old_val.at(0));
+
+                sort_json_category(j[new_category]);
+
+                std::cout << colors::green << "Updated the repository category" << std::endl;
+            }
+
+            f.close();
+
+            f = utils::open_config_file(std::ios::out);
+
+            f << std::setw(4) << j;
+
+            return;
         }
     }
 
-    for (nlohmann::json &removed_repository : removed_repositories) {
-        j[new_category].push_back(removed_repository);
-    }
+    std::cout << colors::green << "The given repository doesn't exists" << std::endl;
 
-    std::sort(j[new_category].begin(), j[new_category].end());
-
-    f.close();
-
-    f = utils::open_config_file(std::ios::out);
-
-    f << std::setw(4) << j;
+    std::exit(2);
 }
 
 void store::add_todo(std::string &name, std::string &goal) {
