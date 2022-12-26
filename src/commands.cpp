@@ -56,22 +56,34 @@ void Commands::status(CLI::App &app) {
 }
 
 void Commands::update(CLI::App &app) {
-    CLI::App *update_subcommand {app.add_subcommand("update", "Updates the category of your repositories")};
+    CLI::App *update_subcommand {app.add_subcommand("update", "Updates informations of a repository")};
 
-    update_subcommand->add_option("name", this->repositories_names, "Repositories to update");
+    update_subcommand->add_option("name", this->repository_name, "Repository to be updated")->required();
 
-    update_subcommand->add_option("-c,--category", this->repository_category, "The new category of the repositories (\"created\" | \"idle\" | \"working\" | \"finished\" | \"others\")")->capture_default_str();
+    update_subcommand->add_option("-l,--link", this->repository_clone_link, "The new clone link of the given repository");
+
+    update_subcommand->add_option("-n,--name", this->new_repository_name, "The new name of the repository to clone");
+
+    this->repository_category = "";
+
+    update_subcommand->add_option("-c,--category", this->repository_category, "The new category of the repositories (\"created\" | \"idle\" | \"working\" | \"finished\" | \"others\")");
+
+    update_subcommand->preparse_callback([&](size_t arg_count) {
+        if (arg_count == 1) {
+            throw CLI::CallForHelp();
+        }
+    });
 
     update_subcommand->callback([&]() {
-        if (!check_repository_category_string(this->repository_category)) {
+        if (this->repository_category != "" && !check_repository_category_string(this->repository_category)) {
             std::cout << colors::red << "The category " << this->repository_category << " is not valid. The valid categories are: created, idle, working, finished, and others." << std::endl;
 
             return;
         }
 
-        store::update_repositories(this->repositories_names, this->repository_category);
+        store::update_repository(this->repository_name, this->new_repository_name, this->repository_clone_link, this->repository_category);
 
-        std::cout << colors::green << "Finished updating the repositories to the category " << this->repository_category << std::endl;
+        std::cout << colors::green << "Finished updating the repository " << this->repository_name << std::endl;
     });
 }
 

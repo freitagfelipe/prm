@@ -18,6 +18,7 @@ private:
     int todo_number {};
     std::string todo_goal {};
     std::string repository_name {};
+    std::string new_repository_name {};
     std::string repository_clone_link {};
     std::string repository_category {"created"};
 
