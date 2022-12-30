@@ -137,7 +137,7 @@ void store::clone_repository(std::string &name) {
                 ss << "git clone " << value[LINK_KEY].get<std::string>() << " 2> /dev/null 1> /dev/null";
 
                 if (std::system(ss.str().c_str()) == 32768) {
-                    std::cerr << colors::red << "You already have this repository in the current directory" << std::endl;
+                    std::cerr << colors::red << "You already have this repository in the current directory or the clone link is invalid" << std::endl;
 
                     std::exit(2);
                 }
@@ -300,6 +300,8 @@ void store::print_todo(std::string &name) {
 
 void store::remove_todo(std::string &name, std::vector<int> &todo_numbers) {
     std::fstream f {utils::open_config_file(std::ios::in | std::ios::out)};
+
+    std::sort(todo_numbers.begin(), todo_numbers.end());
 
     nlohmann::json j {nlohmann::json::parse(f)};
 

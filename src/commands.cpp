@@ -20,7 +20,7 @@ void Commands::add(CLI::App &app) {
 
     add_subcommand->add_option("-l,--link", this->repository_clone_link, "The link to clone the given repository")->required();
 
-    add_subcommand->add_option("-c,--category", this->repository_category, "The category of the repositories (\"created\" | \"idle\" | \"working\" | \"finished\" | \"others\")")->capture_default_str();
+    add_subcommand->add_option("-c,--category", this->repository_category, "The category of the repositories (\"created\" | \"idle\" | \"working\" | \"finished\" | \"others\")")->required();
 
     add_subcommand->callback([&]() {
         if (!check_repository_category_string(this->repository_category)) {
@@ -63,8 +63,6 @@ void Commands::update(CLI::App &app) {
     update_subcommand->add_option("-l,--link", this->repository_clone_link, "The new clone link of the given repository");
 
     update_subcommand->add_option("-n,--name", this->new_repository_name, "The new name of the repository to clone");
-
-    this->repository_category = "";
 
     update_subcommand->add_option("-c,--category", this->repository_category, "The new category of the repositories (\"created\" | \"idle\" | \"working\" | \"finished\" | \"others\")");
 
