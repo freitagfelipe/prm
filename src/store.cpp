@@ -112,44 +112,52 @@ void store::print_repositories() {
     }
 }
 
-void store::clone_repository(std::string &name) {
+void store::clone_repositories(std::vector<std::string> &names) {
+    if (std::system("git 2> /dev/null 1> /dev/null") != 256) {
+        std::cerr << colors::red << "You should have git installed to execute this command" << std::endl;
+
+        std::exit(2);
+    }
+
     std::fstream f {utils::open_config_file(std::ios::in)};
 
     nlohmann::json j {nlohmann::json::parse(f)};
 
     j = j.at(0);
 
-    for (auto &[curr_category, curr_value] : j.items()) {
-        if (curr_value.is_null()) {
+    for (const std::string &category : store::VALID_CATEGORIES) {
+        if (j[category].size() == 0) {
             continue;
         }
 
-        for (auto &[_, value] : curr_value.items()) {
-            if (value[NAME_KEY] == name) {
-                if (std::system("git 2> /dev/null 1> /dev/null") != 256) {
-                    std::cerr << colors::red << "You should have git installed to execute this command" << std::endl;
+        for (std::string &name : names) {
+            int status {};
 
-                    std::exit(2);
+            for (auto &[_, value] : j[category].items()) {
+                if (value[NAME_KEY] == name) {
+                    std::stringstream ss;
+
+                    ss << "git clone " << value[LINK_KEY].get<std::string>() << " 2> /dev/null 1> /dev/null";
+
+                    if (std::system(ss.str().c_str()) == 32768) {
+                        status = -1;
+                    } else {
+                        status = 1;
+                    }
+
+                    break;
                 }
+            }
 
-                std::stringstream ss;
-
-                ss << "git clone " << value[LINK_KEY].get<std::string>() << " 2> /dev/null 1> /dev/null";
-
-                if (std::system(ss.str().c_str()) == 32768) {
-                    std::cerr << colors::red << "You already have this repository in the current directory or the clone link is invalid" << std::endl;
-
-                    std::exit(2);
-                }
-
-                return;
+            if (status == 1) {
+                std::cout << colors::green << "Cloned the repository " << name << " in the current directory" << std::endl;
+            } else if (status == 0) {
+                std::cout << colors::red << "Can't find the repository " << name << std::endl;
+            } else {
+                std::cerr << colors::red << "You already have this repository in the current directory or the clone link is invalid" << std::endl;\
             }
         }
     }
-
-    std::cerr << colors::red << "Can't find the given repository" << std::endl;
-
-    std::exit(2);
 }
 
 void store::remove_repositories(std::vector<std::string> &repositories) {
