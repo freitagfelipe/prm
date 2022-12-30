@@ -22,7 +22,7 @@ std::fstream utils::open_config_file(const std::ios_base::openmode mode) {
     f.open(config_file_path, mode);
 
     if (!f.is_open()) {
-        std::cerr << colors::red << "Can't open the configuration file" << std::endl;
+        std::cerr << colors::red << "Can't open the PRM configuration file" << std::endl;
 
         std::exit(1);
     }

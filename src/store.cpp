@@ -50,7 +50,7 @@ void store::add_repository(std::string &name, std::string &repository_clone_link
     std::regex regex(REGEX_PATTERN);
 
     if (!std::regex_match(repository_clone_link, regex)) {
-        std::cerr << colors::red << "Invalid repository link, must be a ssh clone link for the github or gitlab" << std::endl;
+        std::cerr << colors::red << "Invalid repository link, must be a ssh clone link for the github or gitlab repository" << std::endl;
 
         std::exit(2);
     }
@@ -72,7 +72,7 @@ void store::add_repository(std::string &name, std::string &repository_clone_link
 
         for (auto &[_, value] : j[curr_category].items()) {
             if (value[NAME_KEY] == name) {
-                std::cerr << colors::red << "You already have this repository!" << std::endl;
+                std::cerr << colors::red << "You already have this repository" << std::endl;
 
                 std::exit(2);
             }
@@ -156,7 +156,7 @@ void store::clone_repositories(std::vector<std::string> &names) {
             } else if (status == 0) {
                 std::cerr << colors::red << "Can't find the repository " << name << std::endl;
             } else {
-                std::cerr << colors::red << "You already have this repository in the current directory or the clone link is invalid" << std::endl;\
+                std::cerr << colors::red << "You already have this repository in the current directory or the clone link is invalid" << std::endl;
             }
         }
     }
@@ -200,11 +200,9 @@ void store::update_repository(std::string &name, std::string &new_name, std::str
     std::regex regex(REGEX_PATTERN);
 
     if (new_repository_clone_link != "" && !std::regex_match(new_repository_clone_link, regex)) {
-        std::cerr << colors::red << "Invalid repository link, must be a ssh clone link for the github or gitlab" << std::endl;
+        std::cerr << colors::red << "Invalid repository link, must be a ssh clone link for the github or gitlab repository" << std::endl;
 
         std::exit(2);
-    } else if (name == new_name) {
-        std::cerr << colors::red << "The new given name is equals the old name, so nothing changes" << std::endl;
     }
 
     std::fstream f {utils::open_config_file(std::ios::in | std::ios::out)};
@@ -225,6 +223,8 @@ void store::update_repository(std::string &name, std::string &new_name, std::str
                 j[TODO_KEY].erase(name);
 
                 std::cout << colors::green << "Updated the repository name" << std::endl;
+            } else if (new_name != "" && val[NAME_KEY].get<std::string>() == new_name) {
+                std::cerr << colors::red << "The new given name is equal to the old name, so nothing changes" << std::endl;
             }
 
             if (new_repository_clone_link == val[LINK_KEY]) {
@@ -312,7 +312,7 @@ void store::print_todo(std::string &name) {
     j = j.at(0);
 
     if (j[TODO_KEY][name].size() == 0) {
-        std::cerr << colors::red << "The repository " << name << " doesn't have any To Dos" << std::endl;
+        std::cerr << colors::red << "The repository " << name << " doesn't have any To Do's" << std::endl;
 
         std::exit(2);
     }
@@ -332,7 +332,7 @@ void store::remove_todo(std::string &name, std::vector<int> &todo_numbers) {
     j = j.at(0);
 
     if (j[TODO_KEY][name].size() == 0) {
-        std::cerr << colors::red << "The repository " << name << " doesn't have any To Dos" << std::endl;
+        std::cerr << colors::red << "The repository " << name << " doesn't have any To Do's" << std::endl;
 
         std::exit(2);
     }
@@ -374,7 +374,7 @@ void store::update_todo(std::string &name, int todo_number, std::string &new_goa
     j = j.at(0);
 
     if (j[TODO_KEY][name].size() == 0) {
-        std::cerr << colors::red << "The repository " << name << " doesn't have any To Dos" << std::endl;
+        std::cerr << colors::red << "The repository " << name << " doesn't have any To Do's" << std::endl;
 
         std::exit(2);
     } else if (todo_number <= 0 || size_t(todo_number) > j[TODO_KEY][name].size()) {
