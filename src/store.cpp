@@ -10,6 +10,8 @@
 const std::string NAME_KEY {"name"};
 const std::string LINK_KEY {"link"};
 const std::string TODO_KEY {"todo"};
+const std::string CREATED_KEY {"created"};
+const std::string FINISHED_KEY {"finished"};
 const std::string REGEX_PATTERN {"git@git((hub)|(lab))\\.com:\\S*\\/\\S*\\.git"};
 
 std::pair<bool, nlohmann::json> remove_repository(nlohmann::json &j, std::string &repository) {
@@ -152,7 +154,7 @@ void store::clone_repositories(std::vector<std::string> &names) {
             if (status == 1) {
                 std::cout << colors::green << "Cloned the repository " << name << " in the current directory" << std::endl;
             } else if (status == 0) {
-                std::cout << colors::red << "Can't find the repository " << name << std::endl;
+                std::cerr << colors::red << "Can't find the repository " << name << std::endl;
             } else {
                 std::cerr << colors::red << "You already have this repository in the current directory or the clone link is invalid" << std::endl;\
             }
@@ -273,7 +275,21 @@ void store::add_todo(std::string &name, std::string &goal) {
 
     j = j.at(0);
 
-    if (!check_if_can_insert_goal(j, name, goal)) {
+    for (const std::string &category : {CREATED_KEY, FINISHED_KEY}) {
+        for (auto &[_, val] : j[category].items()) {
+            if (val[NAME_KEY].get<std::string>() == name) {
+                std::cerr << colors::red << "You can't insert a To Do if the repository is in the category created or finished" << std::endl;
+
+                std::exit(2);
+            }
+        }
+    }
+
+    if (j[TODO_KEY].find(name) == j[TODO_KEY].end()) {
+        std::cerr << colors::red << "The given repository doesn't exists" << std::endl;
+
+        std::exit(2);
+    } else if (!check_if_can_insert_goal(j, name, goal)) {
         std::cerr << colors::red << "The given To Do is already inserted in the repository " << name << std::endl;
 
         std::exit(2);
