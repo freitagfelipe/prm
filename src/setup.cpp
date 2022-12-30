@@ -1,5 +1,6 @@
 #include <setup.hpp>
 #include <utils.hpp>
+#include <store.hpp>
 #include <nlohmann/json.hpp>
 #include <colors.hpp>
 #include <fstream>
@@ -9,14 +10,11 @@ void setup::init() {
         return;
     }
 
-    nlohmann::json j = {
-        {"created", nlohmann::json::array()},
-        {"idle", nlohmann::json::array()},
-        {"working", nlohmann::json::array()},
-        {"finished", nlohmann::json::array()},
-        {"others", nlohmann::json::array()},
-        {"todo", nlohmann::json::object()}
-    };
+    nlohmann::json j;
+
+    for (const std::string &category : store::VALID_CATEGORIES) {
+        j[category] = nlohmann::json::array();
+    }
 
     std::fstream f {utils::open_config_file(std::ios::out)};
 

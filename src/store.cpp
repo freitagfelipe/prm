@@ -97,19 +97,17 @@ void store::print_repositories() {
 
     j = j.at(0);
 
-    std::vector<std::string> categories {"created", "idle", "working", "finished", "others"};
-
-    for (std::string category : categories) {
+    for (const std::string &category : store::VALID_CATEGORIES) {
         std::cout << colors::cyan << category << ":" << std::endl;
 
-        if (j[category].is_null()) {
+        if (j[category].size() == 0) {
             std::cout << colors::red << "\tEmpty category" << std::endl;
 
             continue;
         }
 
         for (auto &[_, value] : j[category].items()) {
-            std::cout << colors::white << '\t' << value["name"].get<std::string>() << std::endl;
+            std::cout << colors::white << '\t' << value[NAME_KEY].get<std::string>() << std::endl;
         }
     }
 }
