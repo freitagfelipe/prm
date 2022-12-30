@@ -47,10 +47,10 @@ void Commands::remove(CLI::App &app) {
     });
 }
 
-void Commands::status(CLI::App &app) {
-    CLI::App *status_subcommand {app.add_subcommand("status", "Shows all your repositories and their categories")};
+void Commands::list(CLI::App &app) {
+    CLI::App *list_subcommand {app.add_subcommand("list", "Shows all your repositories and their categories")};
 
-    status_subcommand->callback([&]() {
+    list_subcommand->callback([&]() {
         store::print_repositories();
     });
 }
@@ -121,10 +121,10 @@ void Commands::todo_remove(CLI::App *todo_subcommand) {
     });
 }
 
-void Commands::todo_status(CLI::App *todo_subcommand) {
-    CLI::App *todo_status_subcommand {todo_subcommand->add_subcommand("status", "Shows all To Do's of the given repository")};
+void Commands::todo_list(CLI::App *todo_subcommand) {
+    CLI::App *todo_list_subcommand {todo_subcommand->add_subcommand("list", "Shows all the To Do's of the given repository")};
 
-    todo_status_subcommand->callback([&]() {
+    todo_list_subcommand->callback([&]() {
         store::print_todo(this->repository_name);
     });
 }
@@ -150,7 +150,7 @@ void Commands::todo(CLI::App &app) {
 
     this->todo_add(todo_subcommand);
     this->todo_remove(todo_subcommand);
-    this->todo_status(todo_subcommand);
+    this->todo_list(todo_subcommand);
     this->todo_update(todo_subcommand);
 
     todo_subcommand->preparse_callback([](size_t arg_count) {

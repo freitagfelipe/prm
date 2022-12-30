@@ -11,7 +11,7 @@ int main(int argc, char **argv) {
 
     commands.add(app);
     commands.remove(app);
-    commands.status(app);
+    commands.list(app);
     commands.update(app);
     commands.clone(app);
     commands.todo(app);
