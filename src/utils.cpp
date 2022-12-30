@@ -2,7 +2,11 @@
 #include <colors.hpp>
 #include <iostream>
 
-const std::string config_file_path {".prm.json"};
+#if defined(_WIN32) || defined(_WIN64)
+    const std::string config_file_path {std::string(std::getenv("APPDATA")) + "\\.prm.json"};
+#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
+    const std::string config_file_path {std::string(std::getenv("HOME")) + "/.config/.prm.json"};
+#endif
 
 bool utils::check_if_config_file_exists() {
     std::fstream f;

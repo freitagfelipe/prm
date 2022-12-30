@@ -1,6 +1,7 @@
 #include <commands.hpp>
 #include <setup.hpp>
 #include <CLI/CLI.hpp>
+#include <colors.hpp>
 #include <iostream>
 
 int main(int argc, char **argv) {
@@ -22,7 +23,11 @@ int main(int argc, char **argv) {
         }
     });
 
+    std::cout << colors::reset;
+
     CLI11_PARSE(app, argc, argv);
+
+    std::cout << colors::reset;
 
     return 0;
 }
