@@ -144,7 +144,7 @@ void Commands::todo_update(CLI::App *todo_subcommand) {
 }
 
 void Commands::todo(CLI::App &app) {
-    CLI::App *todo_subcommand {app.add_subcommand("todo", "Manages the To Do of a repository")};
+    CLI::App *todo_subcommand {app.add_subcommand("todo", "Manages the To Do's of a repository")};
 
     todo_subcommand->add_option("name", this->repository_name, "The name of the repository to be updated")->required();
 
