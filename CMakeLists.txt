@@ -21,6 +21,4 @@ endforeach()
 
 add_executable(${PROJECT_NAME} ${TARGET_EXECUTABLES})
 
-if (UNIX)
-    target_link_libraries(${PROJECT_NAME} ${TARGET_LINK_LIBRARIES})
-endif (UNIX)
+target_link_libraries(${PROJECT_NAME} ${TARGET_LINK_LIBRARIES})
