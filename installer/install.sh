@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 echo "Installing PRM..."
 
 if ! [ -x "$(command -v cmake)" ]; then
@@ -15,8 +17,8 @@ fi
 cd ..
 mkdir build
 cd build
-cmake ..
-cmake --build . --config Release
+cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake --build .
 
 if [ ! -d $HOME/.local/bin ]; then
     echo "Creating the following folder to store the executable: $HOME/.local/bin"
