@@ -24,7 +24,7 @@ void Commands::add(CLI::App &app) {
 
     add_subcommand->callback([&]() {
         if (!check_repository_category_string(this->repository_category)) {
-            std::cout << colors::red << "The category " << this->repository_category << " isn't valid. The valid categories are: created, idle, working, finished, and others." << std::endl;
+            std::cout << colors::red << "The category " << this->repository_category << " is not valid. The valid categories are: created, idle, working, finished, and others." << std::endl;
 
             return;
         }
@@ -74,7 +74,7 @@ void Commands::update(CLI::App &app) {
 
     update_subcommand->callback([&]() {
         if (this->repository_category != "" && !check_repository_category_string(this->repository_category)) {
-            std::cout << colors::red << "The category " << this->repository_category << " isn't valid. The valid categories are: created, idle, working, finished, and others." << std::endl;
+            std::cout << colors::red << "The category " << this->repository_category << " is not valid. The valid categories are: created, idle, working, finished, and others." << std::endl;
 
             return;
         }
@@ -93,7 +93,7 @@ void Commands::clone(CLI::App &app) {
     clone_subcommand->callback([&]() {
         store::clone_repositories(this->repositories_names);
 
-        std::cout << colors::green << "Finished clone the given repositories" << std::endl;
+        std::cout << colors::green << "Finished cloning the given repositories" << std::endl;
     });
 }
 
