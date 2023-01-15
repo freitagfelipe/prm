@@ -5,19 +5,22 @@ project(prm)
 set(CMAKE_CXX_STANDARD 20)
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 
-add_compile_options(-Wall -Wextra -Werror)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_options(-Wall -Wextra -Werror)
+endif()
 
-set(TARGET_LINK_LIBRARIES "CLI11" "nlohmann_json")
+set(TARGET_LINK_LIBRARIES "CLI11" "nlohmann_json::nlohmann_json")
+set(TARGET_EXECUTABLES "src/main.cpp" "src/main.cpp" "src/commands.cpp" "src/store.cpp" "src/setup.cpp" "src/utils.cpp")
 set(SUBDIRECTORIES "extern/CLI11" "extern/json")
 
 set(CLI11_TESTING OFF)
+
+include_directories(${CMAKE_SOURCE_DIR}/include ${CMAKE_SOURCE_DIR}/extern/colors.hpp/include/colors)
 
 foreach(SUBDIRECTORY IN LISTS SUBDIRECTORIES)
     add_subdirectory(${SUBDIRECTORY})
 endforeach()
 
-add_executable(${PROJECT_NAME} src/main.cpp)
+add_executable(${PROJECT_NAME} ${TARGET_EXECUTABLES})
 
-if (UNIX)
-    target_link_libraries(${PROJECT_NAME} ${TARGET_LINK_LIBRARIES})
-endif (UNIX)
+target_link_libraries(${PROJECT_NAME} ${TARGET_LINK_LIBRARIES})
