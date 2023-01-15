@@ -30,4 +30,10 @@ echo "Moving the PRM executable to the $HOME/.local/bin"
 
 mv prm $HOME/.local/bin
 
+if ! grep -q "PATH=\"\$HOME/.local/bin:" "$HOME/.profile"; then
+    echo "Adding $HOME/.local/bin to the PATH in $HOME/.profile"
+
+    echo 'if [ -d "$HOME/.local/bin" ] ; then PATH="$HOME/.local/bin:$PATH" fi' >> $HOME/.profile
+fi
+
 echo "Finished the installation"
