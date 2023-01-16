@@ -31,7 +31,7 @@ void Commands::add(CLI::App &app) {
 
         store::add_repository(this->repository_name, this->repository_clone_link, this->repository_category);
 
-        std::cout << colors::green << "Successfully added the given repository in the " << this->repository_category << std::endl;
+        std::cout << colors::green << "Successfully added the given repository in the " << this->repository_category << " category" << std::endl;
     });
 }
 
@@ -81,7 +81,7 @@ void Commands::update(CLI::App &app) {
 
         store::update_repository(this->repository_name, this->new_repository_name, this->repository_clone_link, this->repository_category);
 
-        std::cout << colors::green << "Finished updating the given repository " << this->repository_name << std::endl;
+        std::cout << colors::green << "Finished updating the repository " << this->repository_name << std::endl;
     });
 }
 
