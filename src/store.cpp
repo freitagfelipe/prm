@@ -152,7 +152,7 @@ void store::clone_repositories(std::vector<std::string> &names) {
             if (status == 1) {
                 std::cout << colors::green << "Cloned the repository " << name << " in the current directory" << std::endl;
             } else if (status == 0) {
-                std::cerr << colors::red << "Can't find the repository " << name << std::endl;
+                std::cerr << colors::red << "Can not find the repository " << name << std::endl;
             } else {
                 std::cerr << colors::red << "You already have this repository in the current directory or the clone link is invalid" << std::endl;
             }
@@ -181,7 +181,7 @@ void store::remove_repositories(std::vector<std::string> &repositories) {
         }
 
         if (!removed) {
-            std::cerr << colors::red << "Can't find the repository " << repository << std::endl;
+            std::cerr << colors::red << "Can not find the repository " << repository << std::endl;
         } else {
             std::cout << colors::green << "Removed the repository " << repository << std::endl;
         }
@@ -225,7 +225,7 @@ void store::update_repository(std::string &name, std::string &new_name, std::str
                 std::cerr << colors::red << "The new given name is equal to the old name, so nothing changes" << std::endl;
             }
 
-            if (new_repository_clone_link == val[LINK_KEY]) {
+            if (new_repository_clone_link == val[LINK_KEY].get<std::string>()) {
                 std::cerr << colors::red << "The new given clone link is equal to the old clone link, so nothing changes" << std::endl;
             } else if (new_repository_clone_link != "") {
                 val[LINK_KEY] = new_repository_clone_link;
@@ -261,7 +261,7 @@ void store::update_repository(std::string &name, std::string &new_name, std::str
         }
     }
 
-    std::cout << colors::green << "The given repository doesn't exists" << std::endl;
+    std::cout << colors::green << "The given repository does not exists" << std::endl;
 
     std::exit(2);
 }
@@ -276,7 +276,7 @@ void store::add_todo(std::string &name, std::string &goal) {
     for (const std::string &category : {CREATED_KEY, FINISHED_KEY}) {
         for (auto &[_, val] : j[category].items()) {
             if (val[NAME_KEY].get<std::string>() == name) {
-                std::cerr << colors::red << "You can't insert a To Do if the repository is in the category created or finished" << std::endl;
+                std::cerr << colors::red << "You can not insert a To Do if the repository is in the category created or finished" << std::endl;
 
                 std::exit(2);
             }
@@ -284,7 +284,7 @@ void store::add_todo(std::string &name, std::string &goal) {
     }
 
     if (j[TODO_KEY].find(name) == j[TODO_KEY].end()) {
-        std::cerr << colors::red << "The given repository doesn't exists" << std::endl;
+        std::cerr << colors::red << "The given repository does not exists" << std::endl;
 
         std::exit(2);
     } else if (!check_if_can_insert_goal(j, name, goal)) {
@@ -310,7 +310,7 @@ void store::print_todo(std::string &name) {
     j = j.at(0);
 
     if (j[TODO_KEY][name].size() == 0) {
-        std::cerr << colors::red << "The repository " << name << " doesn't have any To Do's" << std::endl;
+        std::cerr << colors::red << "The repository " << name << " does not have any To Do's" << std::endl;
 
         std::exit(2);
     }
@@ -330,7 +330,7 @@ void store::remove_todo(std::string &name, std::vector<int> &todo_numbers) {
     j = j.at(0);
 
     if (j[TODO_KEY][name].size() == 0) {
-        std::cerr << colors::red << "The repository " << name << " doesn't have any To Do's" << std::endl;
+        std::cerr << colors::red << "The repository " << name << " does not have any To Do's" << std::endl;
 
         std::exit(2);
     }
@@ -345,7 +345,7 @@ void store::remove_todo(std::string &name, std::vector<int> &todo_numbers) {
         }
 
         if (number <= 0 || number - removed_numbers.size() > j[TODO_KEY][name].size()) {
-            std::cerr << colors::red << "The To Do of number " << number << " doesn't exist" << std::endl;
+            std::cerr << colors::red << "The To Do of number " << number << " does not exist" << std::endl;
 
             continue;
         }
@@ -372,11 +372,11 @@ void store::update_todo(std::string &name, int todo_number, std::string &new_goa
     j = j.at(0);
 
     if (j[TODO_KEY][name].size() == 0) {
-        std::cerr << colors::red << "The repository " << name << " doesn't have any To Do's" << std::endl;
+        std::cerr << colors::red << "The repository " << name << " does not have any To Do's" << std::endl;
 
         std::exit(2);
     } else if (todo_number <= 0 || size_t(todo_number) > j[TODO_KEY][name].size()) {
-        std::cerr << colors::red << "The To Do of number " << todo_number << " doesn't exist" << std::endl;
+        std::cerr << colors::red << "The To Do of number " << todo_number << " does not exist" << std::endl;
 
         std::exit(2);
     } else if (!check_if_can_insert_goal(j, name, new_goal)) {
