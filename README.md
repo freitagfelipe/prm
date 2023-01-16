@@ -59,17 +59,46 @@ $ prm todo <repository-name> list
 $ prm todo <repository-name> update <new-goal> -n <todo-number>
 ```
 
-## How to install
+## How to install with Linux package manager
 
-- If you are using a Linux distro that uses the APT as a package manager you can directly install the latest version with `sudo apt install prm`, but if you are not using just let me know that I will try to add the package to your distro's package manager. If you are using Windows, macOS or any Linux distro that doesn't have APT you need to read the "How to build from source" section.
+- If you are using a Linux distro that uses the APT as a package manager you can directly install the latest version executing the following steps:
 
-## How to build from source
+```sh
+$ curl -s --compressed "https://freitagfelipe.github.io/prm-ppa/KEY.gpg" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/prm.gpg >/dev/null
+$ sudo curl -s --compressed -o /etc/apt/sources.list.d/prm_list.list "https://freitagfelipe.github.io/prm-ppa/prm_list.list"
+$ sudo apt update
+$ sudo apt install prm
+```
 
-- PRM uses [CMake](https://cmake.org/) 3.22.1 as the minimun required version and [make](https://www.gnu.org/software/make/) in the build process, so is extremely easy to build the project from the source code, you just need to execute the install.sh if you are in Linux distro or macOS or the install.ps1 if you are in Windows.
+- But if you are not using a distro that comes with APT just let me know and I will try to add the package to your distro's package manager. 
+
+## How to manually install
+
+- If you are using Windows, macOS or any Linux distro that does not have PRM in your package manager this section is for you. PRM uses [CMake](https://cmake.org/) 3.22.1 as the minimun required version and [make](https://www.gnu.org/software/make/) in the installation process, so is extremely easy to install the project from the source code, you just need to have them and execute the install.sh if you are in Linux distro or macOS or the install.ps1 if you are in Windows. After that you need to restart the session and everything should be fine.
 
 ## Troubleshooting
 
-- If after the manual installation process described above you can't execute the binary via terminal typing `prm` and you are a Linux or macOS user please first check if the `$HOME/.local/bin` is in your PATH. In case that your problem is not related with the PATH or you are a Windows user just open a issue and I will try to help you.
+- If after the installation with the APT or following the process described above in the "How to manually install" you can not execute the binary via terminal just typing `prm` you can just open an issue and I will try to help.
+
+## Uninstalling PRM
+
+- If you are on Linux/macOS you just need to execute the following steps:
+
+```sh
+$ rm $HOME/.local/bin/prm
+$ rm $HOME/.config/.prm.json
+```
+
+> You also have the option to open the .profile file located in your home directory and remove the `.local/bin` path inclusion that is automatically added by PRM if it does not exists. But keep in mind that if you remove it, you can broke other apps.
+
+- But if you are on Windows you just need to execute the following steps:
+```ps1
+> rm $env:ProgramFiles\prm
+> rm $env:APPDATA\.prm.json
+> $oldPath = [Environment]::GetEnvironmentVariable("PATH", "User")
+> $newPath = $oldPath.Replace(";$env:ProgramFiles\prm", "")
+> [Environment]::SetEnvironmentVariable("PATH", $newPath, "User")
+```
 
 ## Acknowledgments
 
