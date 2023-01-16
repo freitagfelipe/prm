@@ -13,7 +13,7 @@ try {
     cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
     cmake --build .
 
-    $destination = "$env:ProgramFiles/prm"
+    $destination = "$env:ProgramFiles\prm"
 
     if (-Not (Test-path $destination)) {
         Write-Output "Creating a folder called prm to store the executable in: $env:ProgramFiles"
@@ -25,9 +25,15 @@ try {
 
     Move-Item -Path ".\prm.exe" -Destination $destination -ErrorAction Stop
 
-    echo "Adding the $destination to the system PATH"
+    if (-Not (($env:PATH -split ";") -contains $destination)) {
+        echo "Adding the $destination to the user's PATH"
 
-    $env:PATH += ";$destination"
+        $path = [Environment]::GetEnvironmentVariable("PATH", "User")
+
+        $path += ";" + $destination
+
+        [Environment]::SetEnvironmentVariable("PATH", $path, "User")
+    }
 
     Write-Output "Finished the installation"
 } catch {
