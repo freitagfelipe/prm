@@ -38,7 +38,7 @@ void Commands::add(CLI::App &app) {
 void Commands::remove(CLI::App &app) {
     CLI::App *remove_subcommand {app.add_subcommand("remove", "Removes the given repository")};
 
-    remove_subcommand->add_option("name", this->repositories_names, "The name of the repositories to be removed")->required();
+    remove_subcommand->add_option("name", this->repositories_names, "The names of the repositories to be removed")->required();
 
     remove_subcommand->callback([&]() {
         store::remove_repositories(this->repositories_names);
@@ -125,7 +125,7 @@ void Commands::todo_list(CLI::App *todo_subcommand) {
     CLI::App *todo_list_subcommand {todo_subcommand->add_subcommand("list", "Shows all the To Do's of the given repository")};
 
     todo_list_subcommand->callback([&]() {
-        store::print_todo(this->repository_name);
+        store::print_todos(this->repository_name);
     });
 }
 
