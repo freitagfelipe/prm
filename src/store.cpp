@@ -313,7 +313,9 @@ void store::print_todos(const std::string &repository_name) {
 
     j = j.at(0);
 
-    if (j[TODO_KEY][repository_name].size() == 0) {
+    if (j[TODO_KEY].find(repository_name) == j[TODO_KEY].end()) {
+        std::cerr << colors::red << "The repository " << repository_name << " does not exists" << std::endl;
+    } else if (j[TODO_KEY][repository_name].size() == 0) {
         std::cerr << colors::red << "The repository " << repository_name << " does not have any To Do's" << std::endl;
 
         std::exit(2);
