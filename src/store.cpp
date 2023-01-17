@@ -125,13 +125,13 @@ void store::clone_repositories(std::vector<std::string> &names) {
 
     j = j.at(0);
 
-    for (const std::string &category : store::VALID_CATEGORIES) {
-        if (j[category].size() == 0) {
-            continue;
-        }
+    for (std::string &name : names) {
+        int status {};
 
-        for (std::string &name : names) {
-            int status {};
+        for (const std::string &category : store::VALID_CATEGORIES) {
+            if (j[category].size() == 0) {
+                continue;
+            }
 
             for (auto &[_, value] : j[category].items()) {
                 if (value[NAME_KEY] == name) {
@@ -149,13 +149,17 @@ void store::clone_repositories(std::vector<std::string> &names) {
                 }
             }
 
-            if (status == 1) {
-                std::cout << colors::green << "Cloned the repository " << name << " in the current directory" << std::endl;
-            } else if (status == 0) {
-                std::cerr << colors::red << "Can not find the repository " << name << std::endl;
-            } else {
-                std::cerr << colors::red << "You already have this repository in the current directory or the clone link is invalid" << std::endl;
+            if (status != 0) {
+                break;
             }
+        }
+
+        if (status == 1) {
+            std::cout << colors::green << "Cloned the repository " << name << " in the current directory" << std::endl;
+        } else if (status == 0) {
+            std::cerr << colors::red << "Can not find the repository " << name << std::endl;
+        } else {
+            std::cerr << colors::red << "You already have this repository in the current directory or the clone link is invalid" << std::endl;
         }
     }
 }
