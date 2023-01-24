@@ -32,7 +32,7 @@ $ prm list
 $ prm update <repository-name> -n <new-name> -l <new-link> -c <new-category>
 ```
 
-### Clone a repository
+### Clone a repository (git is needed)
 
 ```
 $ prm clone <repository-name>
