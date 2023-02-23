@@ -26,7 +26,7 @@ std::fstream utils::open_config_file(const std::ios_base::openmode mode) {
     f.open(config_file_path, mode);
 
     if (!f.is_open()) {
-        std::cerr << colors::red << "Can not open the PRM's storage file" << std::endl;
+        std::cerr << colors::red << "Can not open the PRM's storage file" << colors::reset << std::endl;
 
         std::exit(1);
     }

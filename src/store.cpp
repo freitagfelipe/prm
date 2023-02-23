@@ -14,6 +14,14 @@ const std::string CREATED_KEY {"created"};
 const std::string FINISHED_KEY {"finished"};
 const std::string REGEX_PATTERN {"git@git((hub)|(lab))\\.com:\\S*\\/\\S*\\.git"};
 
+#if defined(_WIN32) || defined(_WIN64)
+    const std::string CHECK_IF_GIT_IS_INSTALLED_COMMAND {"git 2>nul 1>nul"};
+    const int STATUS_CODE {1};
+#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
+    const std::string CHECK_IF_GIT_IS_INSTALLED_COMMAND {"git 2> /dev/null 1> /dev/null"};
+    const int STATUS_CODE {256};
+#endif
+
 std::pair<bool, nlohmann::json> remove_repository(nlohmann::json &j, const std::string &repository) {
     auto it {std::find_if(j.begin(), j.end(), [&](nlohmann::json &val) {
         return val[NAME_KEY].get<std::string>() == repository;
@@ -50,7 +58,7 @@ void store::add_repository(const std::string &repository_name, const std::string
     std::regex regex(REGEX_PATTERN);
 
     if (!std::regex_match(repository_clone_link, regex)) {
-        std::cerr << colors::red << "Invalid repository link, must be a ssh clone link for the github or gitlab repository" << std::endl;
+        std::cerr << colors::red << "Invalid repository link, must be a ssh clone link for the github or gitlab repository" << colors::reset << std::endl;
 
         std::exit(2);
     }
@@ -72,7 +80,7 @@ void store::add_repository(const std::string &repository_name, const std::string
 
         for (auto &[_, value] : j[curr_category].items()) {
             if (value[NAME_KEY] == repository_name) {
-                std::cerr << colors::red << "You already have this repository" << std::endl;
+                std::cerr << colors::red << "You already have this repository" << colors::reset << std::endl;
 
                 std::exit(2);
             }
@@ -113,8 +121,8 @@ void store::print_repositories() {
 }
 
 void store::clone_repositories(const std::vector<std::string> &repository_names) {
-    if (std::system("git 2> /dev/null 1> /dev/null") != 256) {
-        std::cerr << colors::red << "You should have git installed to execute this command" << std::endl;
+    if (std::system(CHECK_IF_GIT_IS_INSTALLED_COMMAND.c_str()) != STATUS_CODE) {
+        std::cerr << colors::red << "You should have git installed to execute this command" << colors::reset << std::endl;
 
         std::exit(2);
     }
@@ -202,7 +210,7 @@ void store::update_repository(const std::string &repository_name, const std::str
     std::regex regex(REGEX_PATTERN);
 
     if (new_repository_clone_link != "" && !std::regex_match(new_repository_clone_link, regex)) {
-        std::cerr << colors::red << "Invalid repository link, must be a ssh clone link for the github or gitlab repository" << std::endl;
+        std::cerr << colors::red << "Invalid repository link, must be a ssh clone link for the github or gitlab repository" << colors::reset << std::endl;
 
         std::exit(2);
     }
@@ -265,7 +273,7 @@ void store::update_repository(const std::string &repository_name, const std::str
         }
     }
 
-    std::cout << colors::green << "The given repository does not exists" << std::endl;
+    std::cout << colors::green << "The given repository does not exists" << colors::reset << std::endl;
 
     std::exit(2);
 }
@@ -280,7 +288,7 @@ void store::add_todo(const std::string &repository_name, const std::string &goal
     for (const std::string &category : {CREATED_KEY, FINISHED_KEY}) {
         for (auto &[_, val] : j[category].items()) {
             if (val[NAME_KEY].get<std::string>() == repository_name) {
-                std::cerr << colors::red << "You can not insert a To Do if the repository is in the category created or finished" << std::endl;
+                std::cerr << colors::red << "You can not insert a To Do if the repository is in the category created or finished" << colors::reset << std::endl;
 
                 std::exit(2);
             }
@@ -288,11 +296,11 @@ void store::add_todo(const std::string &repository_name, const std::string &goal
     }
 
     if (j[TODO_KEY].find(repository_name) == j[TODO_KEY].end()) {
-        std::cerr << colors::red << "The given repository does not exists" << std::endl;
+        std::cerr << colors::red << "The given repository does not exists" << colors::reset << std::endl;
 
         std::exit(2);
     } else if (!check_if_can_insert_goal(j, repository_name, goal)) {
-        std::cerr << colors::red << "The given To Do is already inserted in the repository " << repository_name << std::endl;
+        std::cerr << colors::red << "The given To Do is already inserted in the repository " << repository_name << colors::reset << std::endl;
 
         std::exit(2);
     }
@@ -316,7 +324,7 @@ void store::print_todos(const std::string &repository_name) {
     if (j[TODO_KEY].find(repository_name) == j[TODO_KEY].end()) {
         std::cerr << colors::red << "The repository " << repository_name << " does not exists" << std::endl;
     } else if (j[TODO_KEY][repository_name].size() == 0) {
-        std::cerr << colors::red << "The repository " << repository_name << " does not have any To Do's" << std::endl;
+        std::cerr << colors::red << "The repository " << repository_name << " does not have any To Do's" << colors::reset << std::endl;
 
         std::exit(2);
     }
@@ -336,7 +344,7 @@ void store::remove_todo(const std::string &repository_name, std::vector<int> &to
     j = j.at(0);
 
     if (j[TODO_KEY][repository_name].size() == 0) {
-        std::cerr << colors::red << "The repository " << repository_name << " does not have any To Do's" << std::endl;
+        std::cerr << colors::red << "The repository " << repository_name << " does not have any To Do's" << colors::reset << std::endl;
 
         std::exit(2);
     }
@@ -378,15 +386,15 @@ void store::update_todo(const std::string &repository_name, const int todo_numbe
     j = j.at(0);
 
     if (j[TODO_KEY][repository_name].size() == 0) {
-        std::cerr << colors::red << "The repository " << repository_name << " does not have any To Do's" << std::endl;
+        std::cerr << colors::red << "The repository " << repository_name << " does not have any To Do's" << colors::reset << std::endl;
 
         std::exit(2);
     } else if (todo_number <= 0 || size_t(todo_number) > j[TODO_KEY][repository_name].size()) {
-        std::cerr << colors::red << "The To Do of number " << todo_number << " does not exist" << std::endl;
+        std::cerr << colors::red << "The To Do of number " << todo_number << " does not exist" << colors::reset << std::endl;
 
         std::exit(2);
     } else if (!check_if_can_insert_goal(j, repository_name, new_goal)) {
-        std::cerr << colors::red << "The given To Do is already inserted in the repository " << repository_name << std::endl;
+        std::cerr << colors::red << "The given To Do is already inserted in the repository " << repository_name << colors::reset << std::endl;
 
         std::exit(2);
     }
