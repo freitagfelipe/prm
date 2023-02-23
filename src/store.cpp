@@ -14,6 +14,14 @@ const std::string CREATED_KEY {"created"};
 const std::string FINISHED_KEY {"finished"};
 const std::string REGEX_PATTERN {"git@git((hub)|(lab))\\.com:\\S*\\/\\S*\\.git"};
 
+#if defined(_WIN32) || defined(_WIN64)
+    const std::string CHECK_IF_GIT_IS_INSTALLED_COMMAND {"git 2>nul 1>nul"};
+    const int STATUS_CODE {1};
+#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
+    const std::string CHECK_IF_GIT_IS_INSTALLED_COMMAND {"git 2> /dev/null 1> /dev/null"};
+    const int STATUS_CODE {256};
+#endif
+
 std::pair<bool, nlohmann::json> remove_repository(nlohmann::json &j, const std::string &repository) {
     auto it {std::find_if(j.begin(), j.end(), [&](nlohmann::json &val) {
         return val[NAME_KEY].get<std::string>() == repository;
@@ -113,7 +121,7 @@ void store::print_repositories() {
 }
 
 void store::clone_repositories(const std::vector<std::string> &repository_names) {
-    if (std::system("git 2> /dev/null 1> /dev/null") != 256) {
+    if (std::system(CHECK_IF_GIT_IS_INSTALLED_COMMAND.c_str()) != STATUS_CODE) {
         std::cerr << colors::red << "You should have git installed to execute this command" << std::endl;
 
         std::exit(2);
