@@ -59,6 +59,11 @@ $ prm todo <repository-name> list
 $ prm todo <repository-name> update <new-goal> -n <todo-number>
 ```
 
+### Get PRM's current version
+```
+$ prm version
+```
+
 ## How to install with Linux package manager
 
 - If you are using a Linux distro that uses the APT as a package manager you can directly install the latest version executing the following steps:
@@ -74,7 +79,7 @@ $ sudo apt install prm
 
 ## How to manually install
 
-- If you are using Windows, macOS or any Linux distro that does not have PRM in your package manager this section is for you. PRM uses [CMake](https://cmake.org/) 3.22.1 as the minimun required version and [make](https://www.gnu.org/software/make/) in the installation process, so is extremely easy to install the project from the source code, you just need to have them and execute the install.sh if you are in Linux distro or macOS or the install.ps1 if you are in Windows. After that you need to restart the session and everything should be fine.
+- If you are using Windows, macOS or any Linux distro that does not have PRM in your package manager this section is for you. PRM uses [CMake](https://cmake.org/) 3.22.1 as the minimun required version and [make](https://www.gnu.org/software/make/) in the installation process, so is extremely easy to install the project from the source code, you just need to have them and execute the install.sh if you are using a Linux distro or macOS or the install.ps1 if you are using Windows. After that you need to restart the session and everything should be fine. Also, remember to clone the repository with `--recurse-submodules`.
 
 ## Troubleshooting
 

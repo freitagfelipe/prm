@@ -12,6 +12,8 @@ public:
     void update(CLI::App &app);
     void clone(CLI::App &app);
     void todo(CLI::App &app);
+    void version(CLI::App &app);
+
 private:
     std::vector<std::string> repositories_names;
     std::vector<int> todo_numbers;

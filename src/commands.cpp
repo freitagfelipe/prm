@@ -159,3 +159,11 @@ void Commands::todo(CLI::App &app) {
         }
     });
 }
+
+void Commands::version(CLI::App &app) {
+    CLI::App *version_subcommand {app.add_subcommand("version", "Shows PRM's version")};
+
+    version_subcommand->callback([]() {
+        std::cout << "PRM version 1.0.2" << std::endl;
+    });
+}

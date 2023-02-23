@@ -16,6 +16,7 @@ int main(int argc, char **argv) {
     commands.update(app);
     commands.clone(app);
     commands.todo(app);
+    commands.version(app);
 
     app.preparse_callback([](size_t arg_count) {
         if (arg_count == 0) {
