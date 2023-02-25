@@ -4,7 +4,7 @@
 
 ## How PRM was made
 
-- PRM is written in C++, using only [CLI11](https://github.com/CLIUtils/CLI11) to make the command line parsing process and [json](https://github.com/nlohmann/json) to read and write the user's storage file.
+- PRM is written in C++, using only [CLI11](https://github.com/CLIUtils/CLI11) to make the command line parsing process, [json](https://github.com/nlohmann/json) to read and write the user's storage file and [colors.hpp](https://github.com/hugorplobo/colors.hpp) to colorize some parts of the output.
 
 ## How to use
 
