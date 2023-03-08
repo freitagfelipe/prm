@@ -87,7 +87,13 @@ $ sudo apt install prm
 
 ## Uninstalling PRM
 
-- If you are on Linux/macOS you just need to execute the following steps:
+- If you installed PRM with APT you can just execute the following command:
+
+```
+sudo apt remove prm
+```
+
+- If you installed manually and are on Linux/macOS you just need to execute the following steps:
 
 ```sh
 $ rm $HOME/.local/bin/prm
@@ -96,7 +102,7 @@ $ rm $HOME/.config/.prm.json
 
 > You also have the option to open the .profile file located in your home directory and remove the `.local/bin` path inclusion that is automatically added by PRM if it does not exists. But keep in mind that if you remove it, you can broke other apps.
 
-- But if you are on Windows you just need to execute the following steps:
+- But if you installed manually but are on Windows you just need to execute the following steps:
 ```ps1
 > rm $env:ProgramFiles\prm
 > rm $env:APPDATA\.prm.json
