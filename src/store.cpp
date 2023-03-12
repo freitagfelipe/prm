@@ -16,10 +16,28 @@ const std::string REGEX_PATTERN {"git@git((hub)|(lab))\\.com:\\S*\\/\\S*\\.git"}
 
 #if defined(_WIN32) || defined(_WIN64)
     const std::string CHECK_IF_GIT_IS_INSTALLED_COMMAND {"git 2>nul 1>nul"};
-    const int STATUS_CODE {1};
-#elif defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))
+    const int GIT_STATUS_CODE {1};
+    const int GIT_CLONE_ERROR_STATUS {128};
+
+    int execute_git_clone(const std::string &link) {
+        std::stringstream ss;
+
+        ss << "git clone " << link << " --recurse-submodules 2>nul 1>nul";
+
+        return std::system(ss.str().c_str());
+    }
+#elif defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
     const std::string CHECK_IF_GIT_IS_INSTALLED_COMMAND {"git 2> /dev/null 1> /dev/null"};
-    const int STATUS_CODE {256};
+    const int GIT_STATUS_CODE {256};
+    const int GIT_CLONE_ERROR_STATUS {32768};
+
+    int execute_git_clone(const std::string &link) {
+        std::stringstream ss;
+
+        ss << "git clone " << link << " --recurse-submodules 2> /dev/null 1> /dev/null";
+
+        return std::system(ss.str().c_str());
+    }
 #endif
 
 std::pair<bool, nlohmann::json> remove_repository(nlohmann::json &j, const std::string &repository) {
@@ -121,7 +139,7 @@ void store::print_repositories() {
 }
 
 void store::clone_repositories(const std::vector<std::string> &repository_names) {
-    if (std::system(CHECK_IF_GIT_IS_INSTALLED_COMMAND.c_str()) != STATUS_CODE) {
+    if (std::system(CHECK_IF_GIT_IS_INSTALLED_COMMAND.c_str()) != GIT_STATUS_CODE) {
         std::cerr << colors::red << "You should have git installed to execute this command" << colors::reset << std::endl;
 
         std::exit(2);
@@ -133,8 +151,10 @@ void store::clone_repositories(const std::vector<std::string> &repository_names)
 
     j = j.at(0);
 
+    enum Status { Success, NotFound, AlreadyClonedOrNotExist };
+
     for (const std::string &name : repository_names) {
-        int status {};
+        Status status {NotFound};
 
         for (const std::string &category : store::VALID_CATEGORIES) {
             if (j[category].size() == 0) {
@@ -143,30 +163,28 @@ void store::clone_repositories(const std::vector<std::string> &repository_names)
 
             for (auto &[_, value] : j[category].items()) {
                 if (value[NAME_KEY] == name) {
-                    std::stringstream ss;
+                    int status_code = execute_git_clone(value[LINK_KEY].get<std::string>());
 
-                    ss << "git clone " << value[LINK_KEY].get<std::string>() << " 2> /dev/null 1> /dev/null";
-
-                    if (std::system(ss.str().c_str()) == 32768) {
-                        status = -1;
+                    if (status_code == GIT_CLONE_ERROR_STATUS) {
+                        status = AlreadyClonedOrNotExist;
                     } else {
-                        status = 1;
+                        status = Success;
                     }
 
                     break;
                 }
             }
 
-            if (status != 0) {
+            if (status != NotFound) {
                 break;
             }
         }
 
-        if (status == 1) {
+        if (status == Success) {
             std::cout << colors::green << "Cloned the repository " << name << " in the current directory" << std::endl;
-        } else if (status == 0) {
+        } else if (status == NotFound) {
             std::cerr << colors::red << "Can not find the repository " << name << std::endl;
-        } else {
+        } else if (status == AlreadyClonedOrNotExist) {
             std::cerr << colors::red << "You already have this repository in the current directory or the clone link is invalid" << std::endl;
         }
     }
