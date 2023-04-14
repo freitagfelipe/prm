@@ -267,18 +267,22 @@ void store::update_repository(const std::string &repository_name, const std::str
                 std::cerr << colors::red << "The new given category is equal to the old category, so nothing changes" << std::endl;
             }
 
-            if (new_category == category || new_category == "") {
+            if ((new_category == category || new_category == "") && new_repository_name != repository_name) {
                 sort_json_category(j[category]);
-            } else {
+            } else if (new_category != category) {
                 std::string target_name {new_repository_name != "" ? new_repository_name : repository_name};
 
-                auto [erased, old_val] = remove_repository(j[category], target_name);
+                if (j[TODO_KEY][target_name].size() != 0 && (new_category == CREATED_KEY || new_category == FINISHED_KEY)) {
+                    std::cerr << colors::red << "The given repository has To Do's to be done, so you can not change it to the created or finished categories" << std::endl;
+                } else {
+                    auto [erased, old_val] = remove_repository(j[category], target_name);
 
-                j[new_category].push_back(old_val.at(0));
+                    j[new_category].push_back(old_val.at(0));
 
-                sort_json_category(j[new_category]);
+                    sort_json_category(j[new_category]);
 
-                std::cout << colors::green << "Updated the repository category" << std::endl;
+                    std::cout << colors::green << "Updated the repository category" << std::endl;
+                }
             }
 
             f.close();
