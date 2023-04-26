@@ -1,4 +1,5 @@
 #include <utils.hpp>
+#include <exit.hpp>
 #include <colors.hpp>
 #include <iostream>
 
@@ -28,7 +29,7 @@ std::fstream utils::open_config_file(const std::ios_base::openmode mode) {
     if (!f.is_open()) {
         std::cerr << colors::red << "Can not open the PRM's storage file" << colors::reset << std::endl;
 
-        std::exit(1);
+        std::exit(EXIT_BY_PROGRAM_ERROR);
     }
 
     return f;
