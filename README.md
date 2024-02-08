@@ -64,36 +64,17 @@ $ prm todo <repository-name> update <new-goal> -n <todo-number>
 $ prm version
 ```
 
-## How to install with Linux package manager
+## How to install
 
-- If you are using a Linux distro that uses the APT as a package manager you can directly install the latest version executing the following steps:
-
-```sh
-$ curl -s --compressed "https://freitagfelipe.github.io/prm-ppa/KEY.gpg" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/prm.gpg >/dev/null
-$ sudo curl -s --compressed -o /etc/apt/sources.list.d/prm_list.list "https://freitagfelipe.github.io/prm-ppa/prm_list.list"
-$ sudo apt update
-$ sudo apt install prm
-```
-
-- But if you are not using a distro that comes with APT just let me know and I will try to add the package to your distro's package manager. 
-
-## How to manually install
-
-- If you are using Windows, macOS or any Linux distro that does not have PRM in your package manager this section is for you. PRM uses [CMake](https://cmake.org/) 3.22.1 as the minimun required version and [make](https://www.gnu.org/software/make/) in the installation process, so is extremely easy to install the project from the source code, you just need to have them and execute the install.sh if you are using a Linux distro or macOS or the install.ps1 if you are using Windows. After that you need to restart the session and everything should be fine. Also, remember to clone the repository with `--recurse-submodules`.
+- PRM uses [CMake](https://cmake.org/) 3.22.1 as the minimun required version and [make](https://www.gnu.org/software/make/) in the installation process, so is extremely easy to install the project from the source code, you just need to have them and execute the install.sh if you are using a Linux distro or macOS or the install.ps1 if you are using Windows. After that you need to restart the session and everything should be fine. Also, remember to clone the repository with `--recurse-submodules`.
 
 ## Troubleshooting
 
-- If after the installation with the APT or following the process described above in the "How to manually install" you can not execute the binary via terminal just typing `prm` you can just open an issue and I will try to help.
+- If after the installation described above in the "How to install" section you can not execute the binary via terminal just typing `prm` you can just open an issue and I will try to help.
 
 ## Uninstalling PRM
 
-- If you installed PRM with APT you can just execute the following command:
-
-```
-sudo apt remove prm
-```
-
-- If you installed manually and are on Linux/macOS you just need to execute the following steps:
+- If you are on Linux or macOS you just need to execute the following steps:
 
 ```sh
 $ rm $HOME/.local/bin/prm
